@@ -2,46 +2,50 @@
 Matrix Factorization for Recommender Systems
 =============================================
 
-Python translation of an R script implementing four variants of
-matrix-factorization-based collaborative filtering (Aggarwal, 2016 style):
-
+Variante implementada aqui:
     1) Matrix-based Batch Gradient Descent
-    2) Stochastic Gradient Descent (SGD)
-    3) Matrix-based Batch Gradient Descent with L2 regularization
-    4) Stochastic Gradient Descent (SGD) with L2 regularization
 
-All functions work with any ratings matrix R (numpy array or pandas
-DataFrame) where missing entries are represented as NaN. Rows are
-users, columns are items.
+Todas las funciones trabajan con cualquier matriz de ratings R (numpy array
+o pandas DataFrame) donde las entradas faltantes son NaN. Las filas son
+usuarios, las columnas son items (peliculas).
+
+CORRECCION respecto a la version original:
+    Antes, `user_names` y `movie_names` se generaban con `range(...)`,
+    es decir, usaban la POSICION de cada fila/columna en la matriz
+    pivoteada (0, 1, 2, ...) en vez del userId / movieId real. Esto hacia
+    que las recomendaciones mostraran indices que no correspondian al
+    movieId verdadero, imposibilitando cruzarlas con movies.csv.
+
+    Ahora se usan directamente `_R_values.index` y `_R_values.columns`,
+    que son los userId y movieId reales que vienen del pivot_table.
 """
 
 import numpy as np
-import pandas as pd 
+import pandas as pd
 
 datos = pd.read_csv('Bases/ratings.csv')
-
-################################################################################
-# Achicar la matriz aleatoriamente
+peliculas = pd.read_csv('Bases/movies.csv')
 
 
+########################################################################################
+#    ACHICAR LA MATRIZ ALEATORIAMENTE
 
-# 1. Seleccionar una muestra aleatoria de 500 usuarios únicos
-# ALEATORIO, agregar random_state=semilla  para fijar semilla 
-usuarios_muestra = datos['userId'].drop_duplicates().sample(n=500)
+
+# 1. Seleccionar una muestra aleatoria de 500 usuarios unicos
+# ALEATORIO, agregar random_state=semilla para fijar semilla
+usuarios_muestra = datos['userId'].drop_duplicates().sample(n=500, random_state=42)
 
 # 2. Filtrar el DataFrame original para quedarnos solo con esos 500 usuarios
 datos_recortados = datos[datos['userId'].isin(usuarios_muestra)]
 
 # 3. Crear la matriz de ratings con los datos recortados
 matriz_ratings = datos_recortados.pivot_table(
-    index='userId', 
-    columns='movieId', 
+    index='userId',
+    columns='movieId',
     values='rating'
 )
 
-
-
-################################################################################
+#######################################################################################
 
 
 _R_values = matriz_ratings
@@ -49,8 +53,9 @@ _R_values = matriz_ratings
 # numpy's default reshape is row-major, equivalent to R's byrow=TRUE
 R = np.array(_R_values, dtype=float)
 
-user_names = [f"Usuario {i}" for i in range(_R_values.shape[0])]
-movie_names = [x for x in range(_R_values.shape[1])]
+# --- FIX: usar las etiquetas reales (userId / movieId), no posiciones ---
+user_names = list(_R_values.index)
+movie_names = list(_R_values.columns)
 
 
 # ============================================================== #
@@ -71,7 +76,7 @@ def _as_matrix(R):
 # 1) Matrix-based Batch Gradient Descent (Aggarwal 2016 style)    #
 # ============================================================== #
 
-def matrix_batch_gd(R, k=2, gamma=0.001, max_iter=10000, tol=1e-4, seed=1, verbose=True):
+def matrix_batch_gd(R, k=2, gamma=0.001, max_iter=1000, tol=1e-4, seed=1, verbose=True):
     """
     Matrix factorization via batch gradient descent.
 
@@ -156,8 +161,7 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
 
     Parameters
     ----------
-    user_name : row label (or integer position if R_hat/R_actual are
-        plain numpy arrays without an index) identifying the user.
+    user_name : row label identifying the user (userId real).
     R_hat : pd.DataFrame or np.ndarray
         Predicted ratings matrix (users x items).
     R_actual : pd.DataFrame or np.ndarray
@@ -168,7 +172,7 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
 
     Returns
     -------
-    pd.DataFrame with columns [item label column, value_name]
+    pd.DataFrame with columns [movieId, value_name]
     """
     if not isinstance(R_hat, pd.DataFrame):
         R_hat = pd.DataFrame(R_hat)
@@ -181,13 +185,13 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
     unseen_sorted = unseen.sort_values(ascending=False)
 
     return pd.DataFrame({
-        "Item": unseen_sorted.index,
+        "movieId": unseen_sorted.index,
         value_name: unseen_sorted.round(2).values,
     })
 
 
 # ============================================================== #
-#  Demo / example usage (mirrors the original R script)           #
+#  Demo / example usage                                           #
 # ============================================================== #
 
 if __name__ == "__main__":
@@ -198,7 +202,14 @@ if __name__ == "__main__":
     print("=" * 60)
     result = matrix_batch_gd(R_df)
     R_hat = pd.DataFrame(result["P"] @ result["Q"].T, index=user_names, columns=movie_names)
-    #print(R_hat.round(2))
-    print()
-    print(recommend_all_unseen("Usuario 0", R_hat, R_df))
 
+    # Elegimos el primer usuario real de la muestra (userId real, no posicion 0)
+    primer_usuario = user_names[1]
+
+    recs = recommend_all_unseen(primer_usuario, R_hat, R_df).head(10)
+    # Cruce con los titulos reales de movies.csv
+    recs = recs.merge(peliculas[['movieId', 'title', 'genres']], on='movieId', how='left')
+
+    print()
+    print(f"Top 10 recomendaciones para userId = {primer_usuario}:")
+    print(recs.to_string(index=False))
