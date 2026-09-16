@@ -1,53 +1,39 @@
-"""
-Matrix Factorization for Recommender Systems
-=============================================
-
-Python translation of an R script implementing four variants of
-matrix-factorization-based collaborative filtering (Aggarwal, 2016 style):
-
-    1) Matrix-based Batch Gradient Descent
-    2) Stochastic Gradient Descent (SGD)
-    3) Matrix-based Batch Gradient Descent with L2 regularization
-    4) Stochastic Gradient Descent (SGD) with L2 regularization
-
-All functions work with any ratings matrix R (numpy array or pandas
-DataFrame) where missing entries are represented as NaN. Rows are
-users, columns are items.
-"""
-
 import numpy as np
 import pandas as pd
 
-datos = pd.read_csv('Bases/ratings.csv')
-peliculas = pd.read_csv('Bases/movies.csv')
 
-# 1. Seleccionar una muestra aleatoria de 500 usuarios unicos
-# ALEATORIO, agregar random_state=semilla para fijar semilla
-usuarios_muestra = datos['userId']
-#.drop_duplicates().sample(n=500, random_state=42)
+# ============================================================== #
+#  Toy example matrix (movies), same data as the original R code #
+# ============================================================== #
 
-# 2. Filtrar el DataFrame original para quedarnos solo con esos 500 usuarios
-datos_recortados = datos[datos['userId'].isin(usuarios_muestra)]
-
-# 3. Crear la matriz de ratings con los datos recortados
-matriz_ratings = datos_recortados.pivot_table(
-    index='userId',
-    columns='movieId',
-    values='rating'
-)
-
-_R_values = matriz_ratings
+_R_values = [
+    4, np.nan, np.nan, 2, np.nan, 5,
+    np.nan, 1, 5, np.nan, 2, np.nan,
+    2, 5, 3, 4, np.nan, np.nan,
+    np.nan, np.nan, np.nan, 5, 4, 3,
+    np.nan, 2, np.nan, np.nan, 3, 5,
+    1, np.nan, 2, 4, 5, np.nan,
+]
 
 # numpy's default reshape is row-major, equivalent to R's byrow=TRUE
-R = np.array(_R_values, dtype=float)
+R = np.array(_R_values, dtype=float).reshape(6, 6)
 
-# --- FIX: usar las etiquetas reales (userId / movieId), no posiciones ---
-user_names = list(_R_values.index)
-movie_names = list(_R_values.columns)
+user_names = [f"Usuario {i}" for i in range(1, 7)]
+movie_names = [
+    "Tonto y re tonto",
+    "El padrino",
+    "La pistola desnuda",
+    "Buenos Muchachos",
+    "Casino",
+    "Zoolander",
+]
 
 
-#######################################################################################
-
+# ============================================================== #
+# Helper: pull raw numpy array + optional row/col labels out of   #
+# either a numpy array or a pandas DataFrame, so every algorithm  #
+# below works with either input type.                             #
+# ============================================================== #
 
 def _as_matrix(R):
     """Return (values, row_labels, col_labels) for R (ndarray or DataFrame)."""
@@ -57,18 +43,17 @@ def _as_matrix(R):
     return R, list(range(R.shape[0])), list(range(R.shape[1]))
 
 # ============================================================== #
-#   2) SGD Algorithm based on Aggarwal (2016)                     #
+#   4) SGD Algorithm with regularization                          #
 # ============================================================== #
 
-def sgd_aggarwal(R, k=2, gamma=0.01, max_iter=1000, tol=1e-4, seed=1, verbose=True):
+def sgd_aggarwal_reg(R, k=2, gamma=0.01, lambda_=0.1, max_iter=1000, tol=1e-4, seed=42, verbose=True):
     """
-    Matrix factorization via stochastic gradient descent.
+    Stochastic gradient descent matrix factorization with L2 regularization.
 
-    For each observed entry (i, j), visited in random order each epoch:
-        e_ij   <- r_ij - p_i . q_j
-        p_i    <- p_i + gamma * e_ij * q_j
-        q_j    <- q_j + gamma * e_ij * p_i     (uses the UPDATED p_i,
-                                                 matching the original R code)
+    For each observed entry (i, j):
+        e_ij <- r_ij - p_i . q_j
+        p_i  <- p_i + gamma * (e_ij * q_j - lambda * p_i)
+        q_j  <- q_j + gamma * (e_ij * p_i - lambda * q_j)    (uses UPDATED p_i)
 
     Returns
     -------
@@ -95,8 +80,8 @@ def sgd_aggarwal(R, k=2, gamma=0.01, max_iter=1000, tol=1e-4, seed=1, verbose=Tr
             r_hat = np.dot(P[i, :], Q[j, :])
             e = r_ij - r_hat
 
-            P[i, :] = P[i, :] + gamma * e * Q[j, :]
-            Q[j, :] = Q[j, :] + gamma * e * P[i, :]
+            P[i, :] = P[i, :] + gamma * (e * Q[j, :] - lambda_ * P[i, :])
+            Q[j, :] = Q[j, :] + gamma * (e * P[i, :] - lambda_ * Q[j, :])
 
         obs_i, obs_j = observed[:, 0], observed[:, 1]
         predictions = np.sum(P[obs_i, :] * Q[obs_j, :], axis=1)
@@ -126,7 +111,8 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
 
     Parameters
     ----------
-    user_name : row label identifying the user (userId real).
+    user_name : row label (or integer position if R_hat/R_actual are
+        plain numpy arrays without an index) identifying the user.
     R_hat : pd.DataFrame or np.ndarray
         Predicted ratings matrix (users x items).
     R_actual : pd.DataFrame or np.ndarray
@@ -137,7 +123,7 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
 
     Returns
     -------
-    pd.DataFrame with columns [movieId, value_name]
+    pd.DataFrame with columns [item label column, value_name]
     """
     if not isinstance(R_hat, pd.DataFrame):
         R_hat = pd.DataFrame(R_hat)
@@ -150,9 +136,10 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
     unseen_sorted = unseen.sort_values(ascending=False)
 
     return pd.DataFrame({
-        "movieId": unseen_sorted.index,
+        "Item": unseen_sorted.index,
         value_name: unseen_sorted.round(2).values,
     })
+
 
 # ============================================================== #
 #  Demo / example usage (mirrors the original R script)           #
@@ -161,6 +148,14 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
 if __name__ == "__main__":
     R_df = pd.DataFrame(R, index=user_names, columns=movie_names)
 
+    print("=" * 60)
+    print("1) Matrix-based Batch Gradient Descent")
+    print("=" * 60)
+    result = matrix_batch_gd(R_df)
+    R_hat = pd.DataFrame(result["P"] @ result["Q"].T, index=user_names, columns=movie_names)
+    print(R_hat.round(2))
+    print()
+    print(recommend_all_unseen("Usuario 1", R_hat, R_df))
 
     print()
     print("=" * 60)
@@ -168,14 +163,30 @@ if __name__ == "__main__":
     print("=" * 60)
     result_sgd = sgd_aggarwal(R_df)
     R_hat_sgd = pd.DataFrame(result_sgd["R_hat"], index=user_names, columns=movie_names)
+    print(R_hat_sgd.round(2))
     print()
-    # Elegimos el primer usuario real de la muestra (userId real, no posicion 0)
-    primer_usuario = user_names[0]
-
-    recs = recommend_all_unseen(primer_usuario, R_hat_sgd, R_df).head(10)
-    # Cruce con los titulos reales de movies.csv
-    recs = recs.merge(peliculas[['movieId', 'title', 'genres']], on='movieId', how='left')
+    print(recommend_all_unseen("Usuario 2", R_hat_sgd, R_df))
 
     print()
-    print(f"Top 10 recomendaciones para userId = {primer_usuario}:")
-    print(recs.to_string(index=False))
+    print("=" * 60)
+    print("3) Matrix-based Batch Gradient Descent with regularization")
+    print("=" * 60)
+    result_reg = matrix_batch_gd_reg(R_df, k=2, gamma=0.01, lambda_=0.1, max_iter=1000, tol=1e-4)
+    R_hat_gd_reg = pd.DataFrame(result_reg["P"] @ result_reg["Q"].T, index=user_names, columns=movie_names)
+    print(recommend_all_unseen("Usuario 6", R_hat_gd_reg, R_df))
+
+    print()
+    print("=" * 60)
+    print("4) SGD Algorithm with regularization")
+    print("=" * 60)
+    result_sgd_reg = sgd_aggarwal_reg(R_df)
+    R_hat_sgd_reg = pd.DataFrame(result_sgd_reg["R_hat"], index=user_names, columns=movie_names)
+    print(recommend_all_unseen("Usuario 6", R_hat_sgd_reg, R_df))
+
+    print()
+    print("=" * 60)
+    print("SGD with regularization, k=16 latent factors")
+    print("=" * 60)
+    result_k16 = sgd_aggarwal_reg(R_df, k=16, gamma=0.01, lambda_=0.1, max_iter=1000, tol=1e-4)
+    R_hat_k16 = pd.DataFrame(result_k16["R_hat"], index=user_names, columns=movie_names)
+    print(recommend_all_unseen("Usuario 1", R_hat_k16, R_df))
