@@ -1,1 +1,175 @@
 \chapter{Gradiente Descendente y Descendente estocástico.}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Convergence and Performance Comparison (\(K=2\) vs. \(K=8\))}
+\label{tab:convergence_summary_k_comparison}
+\begin{tabular}{l c c S[table-format=1.4] c l}
+\toprule
+\textbf{Algorithm} & \(\boldsymbol{K}\) & \textbf{Iterations} & {\textbf{Final RMSE}} & \textbf{RMSE Change (\(\Delta\))} & \textbf{Status} \\
+\midrule
+Batch GD                        & 2 & 647  & 1.2855 & \(3.7 \times 10^{-5}\) & Converged \\
+SGD (Aggarwal 2016)             & 2 & 65   & 0.7445 & \(1.0 \times 10^{-5}\) & Converged \\
+Batch GD (w/ reg.)              & 2 & 1000 & 1.2442 & {---}                & Max Iterations \\
+SGD (w/ reg.)                   & 2 & 39   & 0.8009 & \(1.3 \times 10^{-5}\) & Converged \\
+\midrule
+Batch GD                        & 8 & 1000 & 0.6614 & {---}                & Max Iterations \\
+SGD (Aggarwal 2016)             & 8 & 56   & 0.5905 & \(1.7 \times 10^{-5}\) & Converged \\
+Batch GD (w/ reg.)              & 8 & 1000 & 0.6691 & {---}                & Max Iterations \\
+SGD (w/ reg.)                   & 8 & 100  & 0.6509 & \(5.5 \times 10^{-5}\) & Converged \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------------------
+% Recommendations Table (Strict 1 Line Per Item)
+% -----------------------------------------------------------
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+
+\begin{xltabular}{\textwidth}{r r S[table-format=1.2] X l}
+\caption{Top 10 Recommendations for User 1 Across Latent Factors (\(K=2, 8\))} \label{tab:recommendations_k2_k8} \\
+\toprule
+\textbf{Rank} & \textbf{Movie ID} & {\textbf{Rating}} & \textbf{Title} & \textbf{Genres} \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
+\toprule
+\textbf{Rank} & \textbf{Movie ID} & {\textbf{Rating}} & \textbf{Title} & \textbf{Genres} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{5}{r}{{Continued on next page\dots}} \\
+\bottomrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+% ===========================================================
+% K = 2
+% ===========================================================
+\multicolumn{5}{l}{\textbf{Latent Factors: \(K=2\)}} \\
+\addlinespace[2pt]
+\multicolumn{5}{l}{\textit{1) Matrix-based Batch Gradient Descent}} \\
+\addlinespace[1pt]
+1  & 136850 & 8.93 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+2  & 318    & 8.28 & Shawshank Redemption, The (1994) & Crime\genresep Drama \\
+3  & 40491  & 8.11 & Match Factory Girl, The (1990) & Comedy\genresep Drama \\
+4  & 141718 & 7.76 & Deathgasm (2015) & Comedy\genresep Horror \\
+5  & 81535  & 7.43 & Saw VII 3D: The Final Chapter (2010) & Horror\genresep Mystery\genresep Thriller \\
+6  & 156605 & 7.29 & Paterson (2016) & \textit{(no genres listed)} \\
+7  & 102217 & 7.29 & Bill Hicks: Revelations (1993) & Comedy \\
+8  & 876    & 7.19 & Supercop 2 (Project S) (1993) & Action\genresep Comedy\genresep Crime\genresep Thriller \\
+9  & 3567   & 7.17 & Bossa Nova (2000) & Comedy\genresep Drama\genresep Romance \\
+10 & 92494  & 7.08 & Dylan Moran: Monster (2004) & Comedy\genresep Documentary \\
+\midrule
+
+\multicolumn{5}{l}{\textit{2) SGD Algorithm (Aggarwal 2016)}} \\
+\addlinespace[1pt]
+1  & 40491  & 8.27 & Match Factory Girl, The (1990) & Comedy\genresep Drama \\
+2  & 136850 & 7.59 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+3  & 3567   & 7.48 & Bossa Nova (2000) & Comedy\genresep Drama\genresep Romance \\
+4  & 156605 & 7.39 & Paterson (2016) & \textit{(no genres listed)} \\
+5  & 67618  & 7.10 & Strictly Sexual (2008) & Comedy\genresep Drama\genresep Romance \\
+6  & 8477   & 7.08 & Jet{\'e}e, La (1962) & Romance\genresep Sci-Fi \\
+7  & 141718 & 6.85 & Deathgasm (2015) & Comedy\genresep Horror \\
+8  & 68536  & 6.79 & Stanley Kubrick: A Life in Pictures (2001) & Documentary \\
+9  & 391    & 6.58 & Jason's Lyric (1994) & Crime\genresep Drama \\
+10 & 57502  & 6.54 & Cat Soup (Nekojiru-so) (2001) & Adv\genresep Anim\genresep Drama\genresep Horror \\
+\midrule
+
+\multicolumn{5}{l}{\textit{3) Matrix-based Batch Gradient Descent with Regularization}} \\
+\addlinespace[1pt]
+1  & 136850 & 9.27 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+2  & 40491  & 8.07 & Match Factory Girl, The (1990) & Comedy\genresep Drama \\
+3  & 141718 & 7.81 & Deathgasm (2015) & Comedy\genresep Horror \\
+4  & 102217 & 7.53 & Bill Hicks: Revelations (1993) & Comedy \\
+5  & 130482 & 7.40 & Too Late for Tears (1949) & Crime\genresep Drama\genresep Film-Noir\genresep Myst\genresep Thril \\
+6  & 92494  & 7.27 & Dylan Moran: Monster (2004) & Comedy\genresep Documentary \\
+7  & 156605 & 7.25 & Paterson (2016) & \textit{(no genres listed)} \\
+8  & 81535  & 7.23 & Saw VII 3D: The Final Chapter (2010) & Horror\genresep Mystery\genresep Thriller \\
+9  & 3567   & 7.17 & Bossa Nova (2000) & Comedy\genresep Drama\genresep Romance \\
+10 & 107780 & 7.07 & Cats (1998) & Musical \\
+\midrule
+
+\multicolumn{5}{l}{\textit{4) SGD Algorithm with Regularization}} \\
+\addlinespace[1pt]
+1  & 8477   & 5.82 & Jet{\'e}e, La (1962) & Romance\genresep Sci-Fi \\
+2  & 6818   & 5.81 & Come and See (1985) & Drama\genresep War \\
+3  & 87234  & 5.70 & Submarine (2010) & Comedy\genresep Drama\genresep Romance \\
+4  & 26326  & 5.55 & Holy Mountain, The (1973) & Drama \\
+5  & 3473   & 5.50 & Jonah Who Will Be 25 in the Year 2000 (1976) & Comedy \\
+6  & 53     & 5.47 & Lamerica (1994) & Adventure\genresep Drama \\
+7  & 26810  & 5.47 & Bad Boy Bubby (1993) & Drama \\
+8  & 6460   & 5.46 & Trial, The (Proc{\`e}s, Le) (1962) & Drama \\
+9  & 177593 & 5.46 & Three Billboards Outside Ebbing, Missouri (2017) & Crime\genresep Drama \\
+10 & 3451   & 5.46 & Guess Who's Coming to Dinner (1967) & Drama \\
+\midrule
+\midrule
+
+% ===========================================================
+% K = 8
+% ===========================================================
+\multicolumn{5}{l}{\textbf{Latent Factors: \(K=8\)}} \\
+\addlinespace[2pt]
+\multicolumn{5}{l}{\textit{1) Matrix-based Batch Gradient Descent}} \\
+\addlinespace[1pt]
+1  & 86781  & 8.46 & Incendies (2010) & Drama\genresep Mystery\genresep War \\
+2  & 318    & 7.87 & Shawshank Redemption, The (1994) & Crime\genresep Drama \\
+3  & 136850 & 7.67 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+4  & 116897 & 7.58 & Wild Tales (2014) & Comedy\genresep Drama\genresep Thriller \\
+5  & 96829  & 7.55 & Hunt, The (Jagten) (2012) & Drama \\
+6  & 876    & 7.27 & Supercop 2 (Project S) (1993) & Action\genresep Comedy\genresep Crime\genresep Thriller \\
+7  & 1354   & 7.24 & Breaking the Waves (1996) & Drama\genresep Mystery \\
+8  & 177765 & 6.84 & Coco (2017) & Adventure\genresep Animation\genresep Children \\
+9  & 148    & 6.81 & Awfully Big Adventure, An (1995) & Drama \\
+10 & 5882   & 6.74 & Treasure Planet (2002) & Adv\genresep Anim\genresep Child\genresep Sci-Fi\genresep IMAX \\
+\midrule
+
+\multicolumn{5}{l}{\textit{2) SGD Algorithm (Aggarwal 2016)}} \\
+\addlinespace[1pt]
+1  & 3567   & 6.95 & Bossa Nova (2000) & Comedy\genresep Drama\genresep Romance \\
+2  & 136850 & 6.61 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+3  & 141718 & 6.38 & Deathgasm (2015) & Comedy\genresep Horror \\
+4  & 876    & 6.31 & Supercop 2 (Project S) (1993) & Action\genresep Comedy\genresep Crime\genresep Thriller \\
+5  & 951    & 6.26 & His Girl Friday (1940) & Comedy\genresep Romance \\
+6  & 6818   & 6.24 & Come and See (1985) & Drama\genresep War \\
+7  & 306    & 6.23 & Three Colors: Red (1994) & Drama \\
+8  & 5607   & 6.23 & Son of the Bride (2001) & Comedy\genresep Drama \\
+9  & 7815   & 6.21 & True Stories (1986) & Comedy\genresep Musical \\
+10 & 3086   & 6.20 & Babes in Toyland (1934) & Child\genresep Comedy\genresep Fantasy\genresep Musical \\
+\midrule
+
+\multicolumn{5}{l}{\textit{3) Matrix-based Batch Gradient Descent with Regularization}} \\
+\addlinespace[1pt]
+1  & 86781  & 8.10 & Incendies (2010) & Drama\genresep Mystery\genresep War \\
+2  & 318    & 7.94 & Shawshank Redemption, The (1994) & Crime\genresep Drama \\
+3  & 116897 & 7.48 & Wild Tales (2014) & Comedy\genresep Drama\genresep Thriller \\
+4  & 96829  & 7.37 & Hunt, The (Jagten) (2012) & Drama \\
+5  & 136850 & 7.32 & Villain (1971) & Crime\genresep Drama\genresep Thriller \\
+6  & 1354   & 7.10 & Breaking the Waves (1996) & Drama\genresep Mystery \\
+7  & 876    & 7.06 & Supercop 2 (Project S) (1993) & Action\genresep Comedy\genresep Crime\genresep Thriller \\
+8  & 177765 & 6.69 & Coco (2017) & Adventure\genresep Animation\genresep Children \\
+9  & 5882   & 6.64 & Treasure Planet (2002) & Adv\genresep Anim\genresep Child\genresep Sci-Fi\genresep IMAX \\
+10 & 148    & 6.60 & Awfully Big Adventure, An (1995) & Drama \\
+\midrule
+
+\multicolumn{5}{l}{\textit{4) SGD Algorithm with Regularization}} \\
+\addlinespace[1pt]
+1  & 3567   & 6.13 & Bossa Nova (2000) & Comedy\genresep Drama\genresep Romance \\
+2  & 6818   & 6.09 & Come and See (1985) & Drama\genresep War \\
+3  & 8477   & 5.97 & Jet{\'e}e, La (1962) & Romance\genresep Sci-Fi \\
+4  & 26326  & 5.92 & Holy Mountain, The (1973) & Drama \\
+5  & 3379   & 5.82 & On the Beach (1959) & Drama \\
+6  & 5490   & 5.79 & The Big Bus (1976) & Action\genresep Comedy \\
+7  & 6201   & 5.78 & Lady Jane (1986) & Drama\genresep Romance \\
+8  & 132333 & 5.77 & Seve (2014) & Documentary\genresep Drama \\
+9  & 33649  & 5.77 & Saving Face (2004) & Comedy\genresep Drama\genresep Romance \\
+10 & 7767   & 5.70 & Best of Youth, The (2003) & Drama \\
+\end{xltabular}
+\endgroup

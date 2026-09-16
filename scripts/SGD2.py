@@ -2,22 +2,17 @@
 Matrix Factorization for Recommender Systems
 =============================================
 
-Variante implementada aqui:
+Python translation of an R script implementing four variants of
+matrix-factorization-based collaborative filtering (Aggarwal, 2016 style):
+
     1) Matrix-based Batch Gradient Descent
+    2) Stochastic Gradient Descent (SGD)
+    3) Matrix-based Batch Gradient Descent with L2 regularization
+    4) Stochastic Gradient Descent (SGD) with L2 regularization
 
-Todas las funciones trabajan con cualquier matriz de ratings R (numpy array
-o pandas DataFrame) donde las entradas faltantes son NaN. Las filas son
-usuarios, las columnas son items (peliculas).
-
-CORRECCION respecto a la version original:
-    Antes, `user_names` y `movie_names` se generaban con `range(...)`,
-    es decir, usaban la POSICION de cada fila/columna en la matriz
-    pivoteada (0, 1, 2, ...) en vez del userId / movieId real. Esto hacia
-    que las recomendaciones mostraran indices que no correspondian al
-    movieId verdadero, imposibilitando cruzarlas con movies.csv.
-
-    Ahora se usan directamente `_R_values.index` y `_R_values.columns`,
-    que son los userId y movieId reales que vienen del pivot_table.
+All functions work with any ratings matrix R (numpy array or pandas
+DataFrame) where missing entries are represented as NaN. Rows are
+users, columns are items.
 """
 
 import numpy as np
@@ -30,8 +25,6 @@ peliculas = pd.read_csv('Bases/movies.csv')
 # ALEATORIO, agregar random_state=semilla para fijar semilla
 usuarios_muestra = datos['userId']
 #.drop_duplicates().sample(n=500, random_state=42)
-#Descomentar la linea de arriba y, agregarla al final de la otra, 
-#si se quiere recortar la muestra. Por si no corre en su computadora
 
 # 2. Filtrar el DataFrame original para quedarnos solo con esos 500 usuarios
 datos_recortados = datos[datos['userId'].isin(usuarios_muestra)]
@@ -53,11 +46,8 @@ user_names = list(_R_values.index)
 movie_names = list(_R_values.columns)
 
 
-# ============================================================== #
-# Helper: pull raw numpy array + optional row/col labels out of   #
-# either a numpy array or a pandas DataFrame, so every algorithm  #
-# below works with either input type.                             #
-# ============================================================== #
+#######################################################################################
+
 
 def _as_matrix(R):
     """Return (values, row_labels, col_labels) for R (ndarray or DataFrame)."""
@@ -66,22 +56,23 @@ def _as_matrix(R):
     R = np.asarray(R, dtype=float)
     return R, list(range(R.shape[0])), list(range(R.shape[1]))
 
-
 # ============================================================== #
-# 3) Matrix-based Batch Gradient Descent with regularization    #
+#   2) SGD Algorithm based on Aggarwal (2016)                     #
 # ============================================================== #
 
-def matrix_batch_gd(R, k=2, gamma=0.001, lambda_=0.1, max_iter=1000, tol=1e-4, seed=1, verbose=True):
+def sgd_aggarwal(R, k=2, gamma=0.01, max_iter=1000, tol=1e-4, seed=1, verbose=True):
     """
-    Batch gradient descent matrix factorization with L2 regularization.
+    Matrix factorization via stochastic gradient descent.
 
-    Update rule:
-        P <- P * (1 - gamma * lambda) + gamma * E_zero %*% Q
-        Q <- Q * (1 - gamma * lambda) + gamma * t(E_zero) %*% P
+    For each observed entry (i, j), visited in random order each epoch:
+        e_ij   <- r_ij - p_i . q_j
+        p_i    <- p_i + gamma * e_ij * q_j
+        q_j    <- q_j + gamma * e_ij * p_i     (uses the UPDATED p_i,
+                                                 matching the original R code)
 
     Returns
     -------
-    dict with keys: P, Q, rmse_history, iterations
+    dict with keys: P, Q, R_hat
     """
     values, _, _ = _as_matrix(R)
     n_users, n_items = values.shape
@@ -91,39 +82,37 @@ def matrix_batch_gd(R, k=2, gamma=0.001, lambda_=0.1, max_iter=1000, tol=1e-4, s
     Q = rng.normal(0, 0.1, size=(n_items, k))
 
     observed = np.argwhere(~np.isnan(values))
-    obs_i, obs_j = observed[:, 0], observed[:, 1]
-    r_observed = values[obs_i, obs_j]
+    n_obs = observed.shape[0]
 
-    rmse_history = []
     prev_rmse = np.inf
-    iterations = 0
 
     for it in range(1, max_iter + 1):
-        iterations = it
-        R_hat = P @ Q.T
-        E = values - R_hat
-        E_zero = np.where(np.isnan(E), 0.0, E)
+        shuffle = rng.permutation(n_obs)
 
-        P_new = P * (1 - gamma * lambda_) + gamma * (E_zero @ Q)
-        Q_new = Q * (1 - gamma * lambda_) + gamma * (E_zero.T @ P)
-        P, Q = P_new, Q_new
+        for idx in shuffle:
+            i, j = observed[idx]
+            r_ij = values[i, j]
+            r_hat = np.dot(P[i, :], Q[j, :])
+            e = r_ij - r_hat
 
+            P[i, :] = P[i, :] + gamma * e * Q[j, :]
+            Q[j, :] = Q[j, :] + gamma * e * P[i, :]
+
+        obs_i, obs_j = observed[:, 0], observed[:, 1]
         predictions = np.sum(P[obs_i, :] * Q[obs_j, :], axis=1)
-        current_rmse = np.sqrt(np.mean((r_observed - predictions) ** 2))
-        rmse_history.append(current_rmse)
+        current_rmse = np.sqrt(np.mean((values[obs_i, obs_j] - predictions) ** 2))
 
-        if it > 1:
-            rmse_change = abs(prev_rmse - current_rmse)
-            if rmse_change < tol:
-                if verbose:
-                    print(f"Converged at iteration {it} - RMSE change: {round(rmse_change, 6)}")
-                break
+        if abs(prev_rmse - current_rmse) < tol:
+            if verbose:
+                print(f"Converged at iteration {it} - RMSE change: {round(abs(prev_rmse - current_rmse), 6)}")
+            break
+
         prev_rmse = current_rmse
 
-        if verbose and it % 100 == 0:
+        if verbose and it % 10 == 0:
             print(f"Iteration {it} - RMSE: {round(current_rmse, 4)}")
 
-    return {"P": P, "Q": Q, "rmse_history": np.array(rmse_history), "iterations": iterations}
+    return {"P": P, "Q": Q, "R_hat": P @ Q.T}
 
 
 # ============================================================== #
@@ -165,24 +154,25 @@ def recommend_all_unseen(user_name, R_hat, R_actual, value_name="Rating"):
         value_name: unseen_sorted.round(2).values,
     })
 
-
 # ============================================================== #
-#  Demo / example usage                                           #
+#  Demo / example usage (mirrors the original R script)           #
 # ============================================================== #
 
 if __name__ == "__main__":
     R_df = pd.DataFrame(R, index=user_names, columns=movie_names)
 
-    print("=" * 60)
-    print("3) Matrix-based Batch Gradient Descent with regularization")
-    print("=" * 60)
-    result_reg = matrix_batch_gd(R_df)
-    R_hat_gd_reg = pd.DataFrame(result_reg["P"] @ result_reg["Q"].T, index=user_names, columns=movie_names)
 
+    print()
+    print("=" * 60)
+    print("2) SGD Algorithm (Aggarwal 2016)")
+    print("=" * 60)
+    result_sgd = sgd_aggarwal(R_df)
+    R_hat_sgd = pd.DataFrame(result_sgd["R_hat"], index=user_names, columns=movie_names)
+    print()
     # Elegimos el primer usuario real de la muestra (userId real, no posicion 0)
     primer_usuario = user_names[0]
 
-    recs = recommend_all_unseen(primer_usuario, R_hat_gd_reg, R_df).head(10)
+    recs = recommend_all_unseen(primer_usuario, R_hat_sgd, R_df).head(10)
     # Cruce con los titulos reales de movies.csv
     recs = recs.merge(peliculas[['movieId', 'title', 'genres']], on='movieId', how='left')
 

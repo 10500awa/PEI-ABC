@@ -33,7 +33,8 @@ peliculas = pd.read_csv('Bases/movies.csv')
 
 # 1. Seleccionar una muestra aleatoria de 500 usuarios unicos
 # ALEATORIO, agregar random_state=semilla para fijar semilla
-usuarios_muestra = datos['userId'].drop_duplicates().sample(n=500, random_state=42)
+usuarios_muestra = datos['userId']
+#.drop_duplicates().sample(n=500, random_state=42)
 
 # 2. Filtrar el DataFrame original para quedarnos solo con esos 500 usuarios
 datos_recortados = datos[datos['userId'].isin(usuarios_muestra)]
@@ -204,7 +205,7 @@ if __name__ == "__main__":
     R_hat = pd.DataFrame(result["P"] @ result["Q"].T, index=user_names, columns=movie_names)
 
     # Elegimos el primer usuario real de la muestra (userId real, no posicion 0)
-    primer_usuario = user_names[1]
+    primer_usuario = user_names[0]
 
     recs = recommend_all_unseen(primer_usuario, R_hat, R_df).head(10)
     # Cruce con los titulos reales de movies.csv
