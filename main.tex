@@ -1,5 +1,5 @@
-\documentclass[a4paper,11pt,oneside]{book}
-\usepackage{geometry}[a4paper]
+\documentclass[11pt, twocolumn]{article}
+\usepackage[a4paper,left=2.75cm,right=2.6cm,top=2.5cm,bottom=2.5cm,heightrounded]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -7,26 +7,35 @@
 \usepackage{tabularx}
 \usepackage{xltabular}
 \usepackage{siunitx}
+\usepackage[
+backend=biber,
+style=numeric-comp,
+natbib=true,
+url=false, 
+doi=true,
+eprint=true,        
+isbn=false,         
+maxcitenames=2,     
+maxbibnames=99,     
+giveninits=true,
+sorting=nty
+]{biblatex}
+\addbibresource{bibliography/biblio.bib}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
-% Clean compact delimiter command for genre separation
-\newcommand{\genresep}{\,\textbar\,}
-
 \begin{document}
-
-\author{Arias, Blanc, Comelli}
-\title{Sistemas de recomendación}
-\date{2026}
-
-\frontmatter
-\maketitle
-\tableofcontents
-
-\mainmatter
-\include{./chapters/chapter00}
-\include{./chapters/chapter01}
-\include{./chapters/chapter02}
-
-\backmatter
-% bibliography, glossary and index would go here.
-
+	
+	\author{Arias, Blanc, Comelli}
+	\title{Sistemas de recomendación}
+	\date{2026}
+	
+	\maketitle
+	
+	\include{chapters/chapter00}
+	\include{chapters/chapter01}
+	\include{chapters/chapter02}
+	
+	\clearpage
+	\nocite{*} 
+	\printbibliography
+	
 \end{document}
