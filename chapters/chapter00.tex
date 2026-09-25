@@ -1,20 +1,87 @@
-\chapter{Preliminares/Motivación}
+\documentclass[12pt, twocolumn, a4paper]{article}
+\usepackage{graphicx} % Required for inserting images
 
-Dada una matriz $R$, de $n x m$, queremos poder factorizarla como producto de otras. Estas otras, queremos que sean más pequeñas que $R$ o que tengan ciertas propiedades que $R$ no tiene, es decir, buscamos a priori, $U$ y $V$, tales que,
+\title{PEI}
+\author{Nicolas Blanc}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Motivación}
+
+No es novedad  que hoy los sistemas de recomendación son parte de nuestra vida cotidiana. En las redes sociales, en la publicidad segmentada e incluso en las plataformas de Streaming. Esto no es para nada grave, quien no ha visto una película recomendada por una plataforma que resultó ser muy buena? En general los sistemas de recomendación suelen ser muy útiles tanto para los usuarios que reciben el contenido que les interesa como para los proveedores que pueden dirgir sus productos a un público en particular. Los sistemas de recomendación son muy utilizados y francamente exitosos en el mundo comercial pero, ¿podremos ampliar su uso con un enfoque macroeconómico? Supongamos por un momento que somos un país productor y tenemos países que son habituales consumidores de nuestras exportaciones. Naturalmente, uno buscaría mantener la competitividad colocando nuevos productos o ampliando la cartera de países importadores, pero esto puede ser muy costoso y además, en algunos casos, no está tan claro que países son potenciales clientes. Es en este punto donde los \textbf{sistemas de recomendación} capturando la información necesaria, pueden ayudar a predecir países interesados en nuestros productos. En particular, se discutirán y se expondrán modelos de \textbf{factores latentes} 
+
+\section*{Preliminares/Motivación}
+
+Dada una matriz $R$, de $n \times m$, no siempre vamos a querer (o poder) factorizarla por ser muy costosa. Es natural, entonces, buscar una aproximación.
+
+Es decir, buscamos a priori, $U$ y $V$ tales que,
 $$R \approx UV. $$
-Para dar cuenta de qué tan buena es nuestra aproximación, hacemos uso de la norma de Frobenius. Por lo tanto, queremos $U$, $V$. Tales que la diferencia sea tan pequeña como sea posible, es decir,
-$$||R - UV||_{F}.$$
-Por lo tanto, podemos pensarlo como un problema de optimización, donde queremos minimizar $J=||R - UV||_{F}$.
 
-Nuevamente, dependiendo de cómo es la naturaleza de los datos de la matriz $R$, pediremos que $U,V,$etc.  tengan ciertas propiedades. Por ejemplo, si queremos que nuestras matrices sean ortonormales entre sí y que sean del menor rango posible, podemos hacer uso de la $SVD$ (singular value decomposition), es decir estaríamos resolviendo el problema:
-$$Minimizar\quad J = ||R - U_{k}\Sigma_{k} V^{T}_{k}||_{F}.$$
-Sujeto a: $U,V$ ortonormales, $k$ el rango de $R$. 
+Para dar cuenta de qué tan buena es nuestra aproximación, hacemos uso de la norma de Frobenius (o  equivalentes). Por lo tanto, queremos $U$, $V$ tales que la diferencia sea tan pequeña como sea posible, es decir,
+$$||R - UV||_{F}.$$
+
+Podemos pensarlo, a su vez, como un problema de optimización, donde queremos minimizar $J=||R - UV||_{F}$.
+
+Nuevamente, dependiendo de cómo es la naturaleza de las entradas de la matriz $R$, pediremos que $U,V$ tengan ciertas propiedades. Por ejemplo, si queremos que nuestras matrices sean ortonormales entre sí y que sean del menor rango posible, podemos hacer uso de la $SVD$ (singular value decomposition).
 
 
 Ahora bien, nuestra matriz $R$ no se trata de números sin significado alguno, en $R$ hay codificados datos sobre la realidad, por ejemplo, podriamos pensar que las filas de $R$ son usuarios de netflix y las columnas son películas. Aquí los datos $r_{ij}$ serían o bien si el usuario ha visto una película o bien cuanta puntuación ha dado un usuario a una pelicula. Tomando este ultimo caso, $r_{ij}$ será la puntuación del usuario $i$ en la película $j$.
 
-Nuestro objetivo no se trata de aproximar $R$ pues si ya conozco $R$ no hay nada que aproximar. El problema es justamente ese. Un usuario puede ver 10,20 o quizas 100 películas pero hay miles, por lo tanto en la matriz $R$ habrán pocos datos conocidos (las puntuaciones de las peliculas que vio) y muchisimos datos desconocidos (puntuaciones de películas que no vio). La idea de los sistemas de recomendacion es poder ser capaz de determinar, a traves de los datos conocidos, qué películas que el usuario no ha visto, le podrían gustar más.
+Nuestro objetivo no se trata de aproximar $R$, pues si ya conozco $R$ no hay nada que aproximar. El problema es justamente ese. Un usuario puede ver 10, 20 o quizas 100 películas pero hay miles, por lo tanto en la matriz $R$ habrán pocos datos conocidos (las puntuaciones de las peliculas que vio) y muchisimos datos desconocidos (puntuaciones de películas que no vio). La idea de los sistemas de recomendacion es poder ser capaz de determinar, a traves de los datos conocidos, es inferir el valor de los datos desconocidos, en nuestro ejemplo, cuales películas que el usuario aún no ha visto, le podrían gustar.
 
-Para dar respuesta a esta pregunta hay que, en primer lugar, rellenar esos datos, pues no podemos trabajar con matrices que le faltan datos. Hemos de rellenar las matrices de manera coherente, dependiendo de la naturaleza del objeto.
+Para dar respuesta a esta pregunta hay que, en primer lugar, rellenar las entradas vacías, pues no podemos trabajar con matrices que le faltan datos. Hemos de rellenar las matrices de manera coherente, dependiendo de la naturaleza del objeto.
 
-Para comenzar con este viaje de recomendaciones, veremos un método sencillo y algo costoso pero que funciona bien, Veremos el méteodo del Gradiente Descendente (GD).
+Para comenzar con este viaje de recomendaciones, veremos un método sencillo y algo costoso pero que funciona bien.
+
+ \section{Conceptos latente}
+
+Asumiendo que los datos poseen ciertas características, a priori no evidente, que pueden compartir entre sí, será de gran utilidad poder extraerlas. Más aún nos permitirán estudiar las preferencias de los usuarios a ciertas características y la tendencia de los items a cumplirlas. A estas características ocultas es a lo que denominaremos como \textit{conceptos latentes}.
+
+Dado que la entrada $i,j$ de nuestra matriz de datos $R$ representa la valoración del usuario $i$ sobre el item $j$ y sabiendo que en una factorización donde $R= UV$ el elemento $r_{ij}$ es tal que 
+$$ r_{ij} = \vec{u}_i \cdot \vec{v}_j$$ 
+donde $\vec{u}_i$ es la fila $i$ de la matriz $U$ y $\vec{v}_j$ es la columna $j$ de $V$, entonces la valoración del usuario $i$ sobre el item $j$ depende tanto de $U$ como de $V$. Recordando que 
+
+Supongamos que tenemos una matriz conocida $R$ de tamaño $m \times n$ que representa las valoraciones de $m$ usuarios sobre $n$ items. En tal caso podemos utilizar diferentes métodos para factorizarla tal que 
+$$R=UV^T$$
+con $U$ de tamaño $m\times k$ y $V$ de $n\times k$ donde $k$ es el rango de la matriz $R$. 
+
+Notemos que $r_{ij}=\vec{u}_i \cdot \vec{v}_j$ donde $\vec{u}_i$ representa la fila $i$ de $U$ y $\vec{v}_j$ la fila $j$ de la matriz $V$. Para nuestro propósito, podemos pensar que cada coordenada del vector $\vec{u}_i$ (de dimensión $k$) representa la afinidad del usuario $i$ al concepto latente correspondiente.
+
+De la misma forma podemos pensar que el vector $\vec{v}_j$ también de dimensión $k$ representa la afinidad del item $j$ al concepto latente correspondiente. Así, llamamos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. Incluso si el rango de $R$ fuese mayor que $k$, podriamos aproximarla tal que 
+$$R \approx UV^T$$
+con $U$ y $V$ de rango $k$. De esta manera, podemos calcular su error utilizando la norma de Frobenius tal que
+$$||R - UV||_{F}$$.
+
+Podemos pensar la aproximación, a su vez, como un problema de optimización, donde queremos minimizar $J=||R - UV||_{F}$.
+
+Sin embargo, el objetivo de nuestro estudio es predecir datos faltantes de nuestra matriz de valoraciones. En este contexto no tiene sentido computar la norma de Frobenius habida cuenta de que nos faltan entradas. Pero, aun así podemos reescribir la función objetivo en término de los datos observados. En virtu de esto, definamos entonces
+$$S=\{(i,j): r_{ij} \text{ es conocido}\}.$$
+
+Supongamos que tenemos una aproximación lo suficientemente buena de $R$ mediante el producto $UV^T$, entonces, podriamos preecir las entradas faltantes de la forma 
+$$\hat{r}_{i,j}=\vec{u}_i \cdot \vec{v}_j.$$
+donde $i,j \notin  S$.
+
+Notemos que la diferencia entre las entradas conocidas $(i,j)$ y la predicción está dada por $$e_{ij}=(r_{ij}-\hat{r}_{ij})=r_{ij}-(\vec{u}_i \cdot \vec{v}_j).$$ Se sigue, entonces, que el problema de minimización a resolver es 
+$$\text{Min }\frac12 \sum_{i,j\in S}e_{ij}^2.$$
+\section*{Gradiente Descendiente} 
+\section*{Gradiente Descendiente Estocástico}
+\section*{Regularización}
+Uno de los principales problemas a la hora de trabajar con matrices disperas 
+
+
+Puede ocurrir, con matrices dispersas, que nuestra aproximación sea teóricamente buena, en el sentido de que el error de nuestro problema (de minimización) sea muy pequeño pero a la luz de los hechos, las predicciones de los no observados no son acordes a lo que uno esperaria. Por ejemplo, si estamos en el contexto de una matriz de calificaciones de usuarios sobre peliculas, sería anormal que se recomiende una película de Terror a quien tiene preferencias claras por películas de Comedia. 
+
+Para aliviar estos efectos, haremos uso de la \textit{regularización Tikhonov}. Esencialmente buscamos controlar mediante un factor $\lambda >0$ aquellas predicciones sobre valores observados que sean grandes, favoreciendo soluciones más simples.
+
+(Agregar una comparación grafica entre la distribucion de las predicciones con y sin reguloarizacion)
+
+Matemáticamente, esto es bla bla bla.
+
+\section*{Gradiente Descendiente con Regularización} 
+\section*{Gradiente Descendiente Estocástico con Regularización}
+
+https://www.ime.unicamp.br/~pulino/MT404/TextosOnline/NocedalJ.pdf
+
+\end{document}
