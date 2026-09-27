@@ -1,6 +1,8 @@
 \documentclass[11pt, twocolumn]{article}
 \usepackage[a4paper,left=2.75cm,right=2.6cm,top=2.5cm,bottom=2.5cm,heightrounded]{geometry}
-\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\unaccentedoperators
+\usepackage{csquotes}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{booktabs}
@@ -24,7 +26,7 @@ sorting=nty
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \begin{document}
 	
-	\author{Arias, Blanc, Comelli}
+	\author{Arias, Blanc, Comelli.}
 	\title{Sistemas de recomendación}
 	\date{2026}
 	
@@ -33,9 +35,8 @@ sorting=nty
 	\include{chapters/chapter00}
 	\include{chapters/chapter01}
 	\include{chapters/chapter02}
-	
-	\clearpage
-	\nocite{*} 
+
+	\nocite{*}
 	\printbibliography
 	
 \end{document}
