@@ -1,7 +1,18 @@
-.aux
-.log
-.synctex.gz
-.toc
-.DS_Store
-Thumbs.db
+# Archivos auxiliares comunes de LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
 
+*.bbl-SAVE-ERROR
+*-blx.bib
