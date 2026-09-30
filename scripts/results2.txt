@@ -1,0 +1,158 @@
+==============================================================================
+10-fold CV | matrix 610 x 9724 | 100836 observed ratings (1.70% dense)
+Factors : 2, 5, 8, 10, 20, 30, 50
+Lambdas : 0.01
+gamma=0.01, max_iter=1000, tol=0.0001 | 7 combinations x 10 folds = 70 fits
+numba: OFF (slow! pip install numba)
+==============================================================================
+
+=== [1/7] k = 2 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.1014 | train 3.653 -> 0.7418 |   55 epochs, converged | 45.6s
+  Fold  2/10 | test 1.0882 | train 3.653 -> 0.7538 |   36 epochs, converged | 29.3s
+  Fold  3/10 | test 1.1006 | train 3.654 -> 0.7485 |   41 epochs, converged | 38.0s
+  Fold  4/10 | test 1.0831 | train 3.653 -> 0.7399 |   49 epochs, converged | 41.4s
+  Fold  5/10 | test 1.1018 | train 3.653 -> 0.7416 |   55 epochs, converged | 46.5s
+  Fold  6/10 | test 1.0729 | train 3.654 -> 0.7532 |   37 epochs, converged | 30.9s
+  Fold  7/10 | test 1.0861 | train 3.653 -> 0.7525 |   36 epochs, converged | 30.0s
+  Fold  8/10 | test 1.0794 | train 3.655 -> 0.7409 |   55 epochs, converged | 46.5s
+  Fold  9/10 | test 1.0849 | train 3.654 -> 0.7560 |   35 epochs, converged | 29.0s
+  Fold 10/10 | test 1.0948 | train 3.654 -> 0.7344 |   67 epochs, converged | 55.8s
+  --> Test RMSE : mean 1.0893 (SD 0.0100)
+  --> Train RMSE: mean 0.7463 (started at 3.653) | generalization gap (test - train): +0.3431
+  --> Epochs    : mean 47 (min 35, max 67) | converged in 10/10 folds
+  --> Time      : 6m 33.1s this combo | 6m 33.1s elapsed | ETA ~39m 18.4s
+  --> *** NEW BEST so far ***
+
+=== [2/7] k = 5 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.1204 | train 3.652 -> 0.6375 |   60 epochs, converged | 50.2s
+  Fold  2/10 | test 1.1042 | train 3.653 -> 0.6376 |   60 epochs, converged | 50.2s
+  Fold  3/10 | test 1.1238 | train 3.654 -> 0.6336 |   70 epochs, converged | 58.5s
+  Fold  4/10 | test 1.1003 | train 3.653 -> 0.6412 |   53 epochs, converged | 44.2s
+  Fold  5/10 | test 1.1163 | train 3.652 -> 0.6362 |   61 epochs, converged | 50.4s
+  Fold  6/10 | test 1.0895 | train 3.654 -> 0.6369 |   64 epochs, converged | 53.4s
+  Fold  7/10 | test 1.0957 | train 3.653 -> 0.6464 |   48 epochs, converged | 40.6s
+  Fold  8/10 | test 1.0869 | train 3.655 -> 0.6595 |   38 epochs, converged | 31.9s
+  Fold  9/10 | test 1.1081 | train 3.654 -> 0.6316 |   73 epochs, converged | 1m 03.6s
+  Fold 10/10 | test 1.1148 | train 3.654 -> 0.6325 |   72 epochs, converged | 1m 01.0s
+  --> Test RMSE : mean 1.1060 (SD 0.0129)
+  --> Train RMSE: mean 0.6393 (started at 3.653) | generalization gap (test - train): +0.4667
+  --> Epochs    : mean 60 (min 38, max 73) | converged in 10/10 folds
+  --> Time      : 8m 24.1s this combo | 14m 57.2s elapsed | ETA ~37m 22.9s
+
+=== [3/7] k = 8 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.1484 | train 3.653 -> 0.5636 |   75 epochs, converged | 1m 01.9s
+  Fold  2/10 | test 1.1412 | train 3.653 -> 0.5646 |   72 epochs, converged | 1m 03.6s
+  Fold  3/10 | test 1.1562 | train 3.654 -> 0.5645 |   69 epochs, converged | 1m 05.4s
+  Fold  4/10 | test 1.1283 | train 3.653 -> 0.5660 |   68 epochs, converged | 1m 02.3s
+  Fold  5/10 | test 1.1509 | train 3.653 -> 0.5621 |   74 epochs, converged | 1m 03.2s
+  Fold  6/10 | test 1.1178 | train 3.654 -> 0.5747 |   60 epochs, converged | 54.6s
+  Fold  7/10 | test 1.1303 | train 3.653 -> 0.5717 |   62 epochs, converged | 53.5s
+  Fold  8/10 | test 1.1311 | train 3.655 -> 0.5680 |   69 epochs, converged | 59.2s
+  Fold  9/10 | test 1.1244 | train 3.654 -> 0.5742 |   59 epochs, converged | 50.8s
+  Fold 10/10 | test 1.1387 | train 3.654 -> 0.5699 |   66 epochs, converged | 55.9s
+  --> Test RMSE : mean 1.1367 (SD 0.0125)
+  --> Train RMSE: mean 0.5680 (started at 3.654) | generalization gap (test - train): +0.5688
+  --> Epochs    : mean 67 (min 59, max 75) | converged in 10/10 folds
+  --> Time      : 9m 50.7s this combo | 24m 47.9s elapsed | ETA ~33m 03.8s
+
+=== [4/7] k = 10 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.1624 | train 3.653 -> 0.5297 |   65 epochs, converged | 54.4s
+  Fold  2/10 | test 1.1379 | train 3.653 -> 0.5280 |   71 epochs, converged | 1m 03.6s
+  Fold  3/10 | test 1.1561 | train 3.654 -> 0.5216 |   75 epochs, converged | 1m 05.2s
+  Fold  4/10 | test 1.1314 | train 3.653 -> 0.5325 |   60 epochs, converged | 50.4s
+  Fold  5/10 | test 1.1655 | train 3.653 -> 0.5228 |   71 epochs, converged | 59.7s
+  Fold  6/10 | test 1.1323 | train 3.654 -> 0.5325 |   63 epochs, converged | 53.8s
+  Fold  7/10 | test 1.1350 | train 3.653 -> 0.5269 |   67 epochs, converged | 1m 01.8s
+  Fold  8/10 | test 1.1420 | train 3.655 -> 0.5211 |   80 epochs, converged | 1m 09.4s
+  Fold  9/10 | test 1.1447 | train 3.654 -> 0.5284 |   69 epochs, converged | 59.0s
+  Fold 10/10 | test 1.1435 | train 3.654 -> 0.5340 |   64 epochs, converged | 54.8s
+  --> Test RMSE : mean 1.1451 (SD 0.0123)
+  --> Train RMSE: mean 0.5278 (started at 3.654) | generalization gap (test - train): +0.6173
+  --> Epochs    : mean 68 (min 60, max 80) | converged in 10/10 folds
+  --> Time      : 9m 52.3s this combo | 34m 40.1s elapsed | ETA ~26m 00.1s
+
+=== [5/7] k = 20 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.2143 | train 3.653 -> 0.3588 |  111 epochs, converged | 1m 39.2s
+  Fold  2/10 | test 1.1826 | train 3.653 -> 0.3752 |   81 epochs, converged | 1m 12.1s
+  Fold  3/10 | test 1.2061 | train 3.654 -> 0.3694 |   85 epochs, converged | 1m 11.2s
+  Fold  4/10 | test 1.1743 | train 3.653 -> 0.3829 |   70 epochs, converged | 58.1s
+  Fold  5/10 | test 1.2169 | train 3.653 -> 0.3607 |  103 epochs, converged | 1m 27.0s
+  Fold  6/10 | test 1.1624 | train 3.654 -> 0.3808 |   75 epochs, converged | 1m 02.2s
+  Fold  7/10 | test 1.1798 | train 3.653 -> 0.3876 |   65 epochs, converged | 55.1s
+  Fold  8/10 | test 1.1775 | train 3.655 -> 0.3741 |   81 epochs, converged | 1m 11.9s
+  Fold  9/10 | test 1.1989 | train 3.654 -> 0.3643 |   98 epochs, converged | 1m 25.9s
+  Fold 10/10 | test 1.1939 | train 3.654 -> 0.3720 |   84 epochs, converged | 1m 18.6s
+  --> Test RMSE : mean 1.1907 (SD 0.0182)
+  --> Train RMSE: mean 0.3726 (started at 3.654) | generalization gap (test - train): +0.8181
+  --> Epochs    : mean 85 (min 65, max 111) | converged in 10/10 folds
+  --> Time      : 12m 21.3s this combo | 47m 01.5s elapsed | ETA ~18m 48.6s
+
+=== [6/7] k = 30 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.2176 | train 3.653 -> 0.2688 |   99 epochs, converged | 1m 32.2s
+  Fold  2/10 | test 1.2004 | train 3.653 -> 0.2739 |   89 epochs, converged | 1m 21.1s
+  Fold  3/10 | test 1.2070 | train 3.654 -> 0.2746 |   90 epochs, converged | 1m 21.5s
+  Fold  4/10 | test 1.1944 | train 3.653 -> 0.2801 |   81 epochs, converged | 1m 13.7s
+  Fold  5/10 | test 1.2050 | train 3.653 -> 0.2771 |   85 epochs, converged | 1m 16.7s
+  Fold  6/10 | test 1.1890 | train 3.654 -> 0.2686 |  100 epochs, converged | 1m 30.6s
+  Fold  7/10 | test 1.1994 | train 3.653 -> 0.2818 |   81 epochs, converged | 1m 13.1s
+  Fold  8/10 | test 1.1981 | train 3.655 -> 0.2702 |   94 epochs, converged | 1m 24.6s
+  Fold  9/10 | test 1.1836 | train 3.654 -> 0.2928 |   70 epochs, converged | 1m 03.7s
+  Fold 10/10 | test 1.2037 | train 3.654 -> 0.2601 |  113 epochs, converged | 1m 42.1s
+  --> Test RMSE : mean 1.1999 (SD 0.0096)
+  --> Train RMSE: mean 0.2748 (started at 3.654) | generalization gap (test - train): +0.9250
+  --> Epochs    : mean 90 (min 70, max 113) | converged in 10/10 folds
+  --> Time      : 13m 39.5s this combo | 1h 0m elapsed | ETA ~10m 06.8s
+
+=== [7/7] k = 50 factors, lambda = 0.01 ===
+  Fold  1/10 | test 1.2005 | train 3.653 -> 0.1475 |  124 epochs, converged | 2m 03.0s
+  Fold  2/10 | test 1.1906 | train 3.653 -> 0.1485 |  119 epochs, converged | 1m 51.6s
+  Fold  3/10 | test 1.2019 | train 3.654 -> 0.1531 |  107 epochs, converged | 1m 40.5s
+  Fold  4/10 | test 1.1856 | train 3.653 -> 0.1484 |  121 epochs, converged | 1m 53.6s
+  Fold  5/10 | test 1.2103 | train 3.653 -> 0.1529 |  109 epochs, converged | 1m 40.1s
+  Fold  6/10 | test 1.1728 | train 3.654 -> 0.1603 |   97 epochs, converged | 1m 27.3s
+  Fold  7/10 | test 1.1869 | train 3.653 -> 0.1571 |  101 epochs, converged | 1m 28.0s
+  Fold  8/10 | test 1.1820 | train 3.655 -> 0.1570 |  102 epochs, converged | 1m 37.3s
+  Fold  9/10 | test 1.1783 | train 3.654 -> 0.1464 |  125 epochs, converged | 1m 55.4s
+  Fold 10/10 | test 1.1825 | train 3.654 -> 0.1742 |   80 epochs, converged | 1m 14.4s
+  --> Test RMSE : mean 1.1891 (SD 0.0117)
+  --> Train RMSE: mean 0.1545 (started at 3.654) | generalization gap (test - train): +1.0346
+  --> Epochs    : mean 108 (min 80, max 125) | converged in 10/10 folds
+  --> Time      : 16m 51.4s this combo | 1h 17m elapsed | ETA ~0.0s
+
+==============================================================================
+ALL COMBINATIONS (ranked by mean test RMSE)
+==============================================================================
+ k_factors  lambda_  mean_rmse  sd_rmse  mean_train_rmse    gap  mean_epochs converged      time
+         2   0.0100     1.0893   0.0100           0.7463 0.3431           47     10/10  6m 33.1s
+         5   0.0100     1.1060   0.0129           0.6393 0.4667           60     10/10  8m 24.1s
+         8   0.0100     1.1367   0.0125           0.5680 0.5688           67     10/10  9m 50.7s
+        10   0.0100     1.1451   0.0123           0.5278 0.6173           68     10/10  9m 52.3s
+        50   0.0100     1.1891   0.0117           0.1545 1.0346          108     10/10 16m 51.4s
+        20   0.0100     1.1907   0.0182           0.3726 0.8181           85     10/10 12m 21.3s
+        30   0.0100     1.1999   0.0096           0.2748 0.9250           90     10/10 13m 39.5s
+
+==============================================================================
+BEST LAMBDA FOR EACH k
+==============================================================================
+ k_factors  lambda_  mean_rmse  sd_rmse    gap
+         2   0.0100     1.0893   0.0100 0.3431
+         5   0.0100     1.1060   0.0129 0.4667
+         8   0.0100     1.1367   0.0125 0.5688
+        10   0.0100     1.1451   0.0123 0.6173
+        20   0.0100     1.1907   0.0182 0.8181
+        30   0.0100     1.1999   0.0096 0.9250
+        50   0.0100     1.1891   0.0117 1.0346
+
+BEST OVERALL: k = 2, lambda = 0.01 -> test RMSE 1.0893 (SD 0.0100)
+Total CV time: 1h 17m
+==============================================================================
+
+Refitting on all data with the best combination...
+SGD: k=2, gamma=0.01, lambda=0.01, 100836 observed ratings, RMSE at init: 3.6535
+  Iteration   10 - RMSE: 0.8364 (change this epoch: 0.014911)
+  Iteration   20 - RMSE: 0.7779 (change this epoch: 0.003289)
+  Iteration   30 - RMSE: 0.7613 (change this epoch: 0.000408)
+  Iteration   40 - RMSE: 0.7530 (change this epoch: 0.000555)
+  Iteration   50 - RMSE: 0.7480 (change this epoch: 0.000394)
+  Converged at iteration 55 (RMSE change 0.000073 < tol 0.0001)
+  Train RMSE: 3.6535 -> 0.7455 (drop 2.9080, 79.6%) | time: 52.7s
