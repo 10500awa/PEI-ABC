@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)  (format=lualatex 2026.9.26)  30 SEP 2026 12:18
+This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)  (format=lualatex 2026.9.26)  7 OCT 2026 17:56
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -254,6 +254,17 @@ LaTeX Info: Redefining \Relbar on input line 970.
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
 )
+(/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
 (/usr/share/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen168
@@ -1117,26 +1128,26 @@ Package babel Info: 'spanish' activates 'spanish' shorthands.
 (./chapters/chapter02.aux))
 \openout1 = main.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: luatex
@@ -1172,8 +1183,8 @@ LaTeX Font Info:    ... okay on input line 29.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \. on input line 29.
-LaTeX Info: Redefining \% on input line 29.
+LaTeX Info: Redefining \. on input line 30.
+LaTeX Info: Redefining \% on input line 30.
 (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count499
@@ -1206,7 +1217,7 @@ File: translations-basic-dictionary-spanish.trsl (spanish translation file `tra
 nslations-basic-dictionary')
 )
 Package translations Info: loading dictionary `translations-basic-dictionary' f
-or `spanish'. on input line 29.
+or `spanish'. on input line 30.
 Package biblatex Info: Trying to load language 'spanish'...
 Package biblatex Info: ... file 'spanish.lbx' found.
  (/usr/share/texmf-dist/tex/latex/biblatex/lbx/spanish.lbx
@@ -1222,28 +1233,44 @@ Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
 
 (./main.bbl)
-Package biblatex Info: Reference section=0 on input line 29.
-Package biblatex Info: Reference segment=0 on input line 29.
-Package hyperref Info: Link coloring ON on input line 29.
+Package biblatex Info: Reference section=0 on input line 30.
+Package biblatex Info: Reference segment=0 on input line 30.
+Package hyperref Info: Link coloring ON on input line 30.
  (./main.out) (./main.out)
 \@outlinefile=\write5
 
 \openout5 = main.out
- [1
+LaTeX Font Info:    Trying to load font information for U+msa on input line 37.
+
+
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 37.
+
+
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 \openout2 = chapters/chapter00.aux
  (./chapters/chapter00.tex 
 [2
 
-] [3]) [4]
+] [3] [4] [5]
+Overfull \hbox (6.91646pt too wide) detected at line 175
+[]
+ []
+
+[6]) [7]
 \openout2 = chapters/chapter01.aux
  (./chapters/chapter01.tex
 Overfull \hbox (6.39766pt too wide) in paragraph at lines 8--23
  [][] 
  []
 
-) [5
+) [8
 
 
 
@@ -1253,11 +1280,11 @@ Overfull \hbox (6.39766pt too wide) in paragraph at lines 8--23
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-) [6
+) [9
 
 
 
-] [7] [8] [9] [10
+] [10] [11] [12] [13
 
 
 ] (./main.aux
@@ -1271,7 +1298,7 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 839A06DF1015CB214D910A810B2EE1CC;1776.
+(rerunfilecheck)             Checksum: C331479B49E9DDF0D49EEC7FDAF511A3;2286.
 Package logreq Info: Writing requests to 'main.run.xml'.
 
 \openout1 = main.run.xml
@@ -1282,15 +1309,15 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 ### bottom level
 
 Here is how much of LuaTeX's memory you used:
- 45101 strings out of 476076
- 125009,1977958 words of node,token memory allocated
- 758 words of node memory still in use:
-   8 hlist, 2 vlist, 3 rule, 4 glue, 4 kern, 1 glyph, 41 attribute, 78 glue_spec
-, 21 attribute_list, 2 write nodes
-   avail lists: 1:2,2:6674,3:930,4:54,5:425,6:45,7:8350,8:48,9:1267,10:32,11:108
-2,12:1
- 66525 multiletter control sequences out of 65536+600000
- 65 fonts using 4727671 bytes
+ 45644 strings out of 476076
+ 125002,1977958 words of node,token memory allocated
+ 866 words of node memory still in use:
+   8 hlist, 2 vlist, 3 rule, 4 glue, 4 kern, 1 glyph, 77 attribute, 78 glue_spec
+, 39 attribute_list, 2 write nodes
+   avail lists: 1:9,2:6674,3:930,4:52,5:435,6:40,7:8630,8:46,9:1267,10:32,11:120
+3,12:1
+ 67044 multiletter control sequences out of 65536+600000
+ 82 fonts using 5988175 bytes
  99i,19n,113p,1472b,2386s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf></usr/share
 /texmf-dist/fonts/opentype/public/lm/lmromancaps10-regular.otf></usr/share/texmf
@@ -1306,11 +1333,12 @@ ist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf
 -dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on main.pdf (10 pages, 143729 bytes).
+s/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><
+/usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on main.pdf (13 pages, 162914 bytes).
 
-PDF statistics: 206 PDF objects out of 1000 (max. 8388607)
- 158 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 1048576)
- 88 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 228 PDF objects out of 1000 (max. 8388607)
+ 176 compressed objects within 2 object streams
+ 40 named destinations out of 1000 (max. 1048576)
+ 96 words of extra memory for PDF output out of 10000 (max. 100000000)
 

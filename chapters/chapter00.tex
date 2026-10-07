@@ -1,74 +1,194 @@
 \section{Introducción}
 No es novedad  que hoy los sistemas de recomendación son parte de nuestra vida cotidiana. En las redes sociales, en la publicidad segmentada e incluso en las plataformas de Streaming. Esto no es para nada grave, quien no ha visto una película recomendada por una plataforma que resultó ser muy buena? En general los sistemas de recomendación suelen ser muy útiles tanto para los usuarios que reciben el contenido que les interesa como para los proveedores que pueden dirgir sus productos a un público en particular. Los sistemas de recomendación son muy utilizados y francamente exitosos en el mundo comercial pero, ¿podremos ampliar su uso con un enfoque macroeconómico? Supongamos por un momento que somos un país productor y tenemos países que son habituales consumidores de nuestras exportaciones. Naturalmente, uno buscaría mantener la competitividad colocando nuevos productos o ampliando la cartera de países importadores, pero esto puede ser muy costoso y además, en algunos casos, no está tan claro que países son potenciales clientes. Es en este punto donde los \textbf{sistemas de recomendación} capturando la información necesaria, pueden ayudar a predecir países interesados en nuestros productos. En particular, se discutirán y se expondrán modelos de \textbf{factores latentes} 
 
-\section{Preliminares/Motivación}
+\section{Preliminares y motivación}
 
-Dada una matriz $R$, de $n \times m$, no siempre vamos a querer (o poder) factorizarla por ser muy costosa. Es natural, entonces, buscar una aproximación.
+Dada una matriz $R\in\mathbb{R}^{n\times m}$, no siempre será conveniente, o incluso posible, calcular una factorización exacta de la misma. Resulta natural, entonces, buscar una aproximación de rango reducido.
 
-Es decir, buscamos a priori, $U$ y $V$ tales que,
-$$R \approx UV. $$
+Es decir, buscamos matrices $U$ y $V$ tales que
+$$R\approx UV^T.$$
+Para determinar qué tan buena es nuestra aproximación, podemos hacer uso de la norma de Frobenius. En consecuencia, buscamos $U$ y $V$ de modo que la diferencia entre $R$ y su aproximación sea tan pequeña como sea posible, es decir, que
+$$\|R-UV^T\|_F$$
+sea mínima.
+Podemos formular este problema como un problema de optimización, en el cual buscamos las matrices $U$ y $V$ que minimicen el error de aproximación:
+$$\min_{U,V} J(U,V)=\|R-UV^T\|_F.$$
+Dependiendo de la naturaleza de las entradas de la matriz $R$ y de las propiedades que deseemos imponer sobre la factorización, podemos requerir que $U$ y $V$ satisfagan determinadas condiciones. Por ejemplo, si buscamos una factorización basada en matrices ortogonales y valores singulares, podemos utilizar la \textit{descomposición en valores singulares} (\textit{Singular Value Decomposition}, SVD).
 
-Para dar cuenta de qué tan buena es nuestra aproximación, hacemos uso de la norma de Frobenius (o  equivalentes). Por lo tanto, queremos $U$, $V$ tales que la diferencia sea tan pequeña como sea posible, es decir,
-$$||R - UV||_{F}.$$
+Sin embargo, en el problema que nos interesa, la matriz $R$ no contiene simplemente números sin significado. Sus entradas representan información acerca de algún fenómeno o conjunto de objetos de interés. Por ejemplo, podemos considerar una matriz cuyas filas representan usuarios de una plataforma de \textit{streaming} y cuyas columnas representan películas. En este caso, la entrada $r_{ij}$ puede representar la valoración del usuario $i$ a la película $j$.
 
-Podemos pensarlo, a su vez, como un problema de optimización, donde queremos minimizar $J=||R - UV||_{F}$.
+Nuestro objetivo, sin embargo, no consiste simplemente en aproximar una matriz $R$ completamente conocida. Si todas las entradas de $R$ fueran conocidas, no habría necesidad de predecirlas. El problema surge precisamente porque, en general, solo conocemos una pequeña parte de sus entradas.
 
-Nuevamente, dependiendo de cómo es la naturaleza de las entradas de la matriz $R$, pediremos que $U,V$ tengan ciertas propiedades. Por ejemplo, si queremos que nuestras matrices sean ortonormales entre sí y que sean del menor rango posible, podemos hacer uso de la $SVD$ (singular value decomposition).
+Un usuario puede haber visto diez, veinte o incluso cien películas, mientras que una plataforma puede disponer de miles o millones de títulos. Por lo tanto, en la matriz de valoraciones habrá relativamente pocas entradas conocidas, correspondientes a las películas que el usuario ha visto y valorado y, una gran cantidad de entradas desconocidas, correspondientes a películas que todavía no ha visto.
+
+El objetivo de un sistema de recomendación consiste, entonces, en utilizar la información disponible para inferir los valores de las entradas desconocidas. En nuestro ejemplo, buscamos determinar qué películas que el usuario aún no ha visto podrían resultar de su interés.
+
+Para abordar este problema, debemos encontrar una forma de completar las entradas desconocidas de manera coherente con la información disponible. No se trata simplemente de asignar valores arbitrarios a las entradas faltantes, sino de construir una aproximación que preserve, en la medida de lo posible, la estructura subyacente de los datos observados.
+
+Este problema constituye una instancia de lo que se conoce como \textit{completado de matrices} (\textit{matrix completion}), y será el punto de partida para nuestro estudio.
+
+Para comenzar este recorrido por los sistemas de recomendación, estudiaremos primero un método sencillo que, aunque puede resultar computacionalmente costoso, permite obtener resultados satisfactorios y sirve como punto de partida para métodos más sofisticados.
+
+ \section{Conceptos latentes}
+ 
+ En muchos problemas de aprendizaje automático, los datos pueden presentar características subyacentes que no son directamente observables, pero que permiten explicar las relaciones entre las distintas observaciones. La identificación de estas características puede resultar de gran utilidad, ya que permite modelar tanto las preferencias de los usuarios como las propiedades de los elementos con los que estos interactúan. A estas características no observadas las denominaremos \textit{conceptos latentes}.
+ 
+ Consideremos una matriz de datos $R \in {R}^{m\times n}$, donde la entrada $r_{ij}$ representa la valoración del usuario $i$ sobre el \textit{ítem} $j$. Una forma de identificar estructuras latentes en los datos consiste en aproximar $R$ mediante una factorización matricial de rango bajo,
+ $$ R\approx UV^T,$$
+1 donde $U\in \mathbb{R}^{m\times k}$ y $V\in  \mathbb {R}^{n\times k}$, con $k\ll\min(m,n)$.
+ 
+ Denotemos por $\vec{u}_i$ a la fila $i$ de $U$ y por $\vec{v}_j$ a la fila $j$ de $V$. Entonces, la entrada $(i,j)$ de $UV^T$ está dada por
+ $$(UV^T)_{ij} = \vec{u}_i\cdot\vec{v}_j,$$
+ 
+ por lo que podemos interpretar la predicción de la valoración del usuario $i$ sobre el ítem $j$ como
+ $$ \hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
+ Cada uno de los vectores $\vec{u}_i,\vec{v}_j\in  \mathbb{R}^{k}$ constituye una representación de dimensión reducida de un usuario y de un ítem, respectivamente. En particular, podemos interpretar cada una de sus coordenadas como una medida de la relación de dicho usuario o ítem con una determinada dimensión latente. Estas dimensiones no tienen necesariamente una interpretación semántica explícita; su significado emerge de la estructura de los datos y del proceso de factorización.
+ 
+ Llamaremos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. De esta manera, el producto interno entre ambos vectores determina la valoración que el modelo asigna al usuario $i$ para el ítem $j$.
+
+ El parámetro $k$ determina la dimensión del espacio latente. Si $k$ es menor que el rango de $R$, no buscamos obtener una factorización exacta, sino una aproximación de rango reducido,
+ $$ R\approx UV^T. $$
+ La calidad de esta aproximación puede medirse mediante la norma de Frobenius,
+ $$ \|R-UV^T\|_F. $$
+ En consecuencia, la búsqueda de una aproximación de rango bajo puede plantearse como un problema de optimización, en el que buscamos determinar $U$ y $V$ de modo que minimicen el error de reconstrucción. En el caso de disponer de la matriz completa, esto conduce al problema
+ $$ \min_{U,V}\frac{1}{2}\|R-UV^T\|_F^2. $$
+ Sin embargo, en nuestro problema no disponemos de todas las entradas de la matriz $R$. El objetivo es precisamente utilizar las valoraciones conocidas para predecir aquellas que faltan. Por este motivo, no resulta apropiado calcular directamente la norma de Frobenius sobre toda la matriz, ya que esta requiere conocer todas sus entradas.
+ 
+ Para abordar esta situación, consideremos el conjunto de índices correspondientes a las entradas observadas,
+ $$ S=\{(i,j): r_{ij}\text{ es conocido}\}. $$
+ A partir de estas entradas, buscamos determinar una factorización de rango bajo $UV^T$ que permita reconstruir adecuadamente los valores observados y, posteriormente, utilizarla para predecir los valores faltantes.
+ 
+ En particular, para una entrada $(i,j)\notin S$, la valoración predicha por el modelo está dada por
+ $$
+ \hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
+ 
+ Para las entradas observadas, definimos el error de reconstrucción como
+ $$ e_{ij} = r_{ij} -\hat r_{ij} = r_{ij}-\vec{u}_i\cdot\vec{v}_j.$$
+ Por lo tanto, podemos formular el problema de encontrar los factores latentes como la minimización del error cuadrático sobre las entradas observadas:
+ $$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} e_{ij}^2. $$
+ Equivalentemente,
+ $$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} \left( r_{ij}-\vec{u}_i\cdot\vec{v}_j \right)^2. $$
+ Esta formulación permite determinar los factores latentes utilizando únicamente la información disponible en las entradas observadas, para posteriormente emplearlos en la predicción de las valoraciones faltantes.
+ 
+\section{Gradiente Descendiente}
+
+El conjunto de datos de validación es un subconjunto de los datos disponibles para el entrenamiento del modelo. Un problema práctico con este enfoque es que la cantidad de datos disponibles es limitada e, idealmente, queremos utilizar la mayor cantidad posible de ellos para entrenar el modelo. Esto requiere que nuestro conjunto de validación $V$ sea relativamente pequeño, lo que puede llevar a una estimación ruidosa (de alta varianza) de la capacidad de predicción del modelo.
+
+Una solución para estos objetivos contrapuestos —contar con un conjunto de entrenamiento grande y, al mismo tiempo, con un conjunto de validación suficientemente grande— es utilizar la validación cruzada. La validación cruzada $K$-fold particiona el conjunto de datos en $K$ partes. En cada iteración, $K-1$ de estas partes forman el conjunto de entrenamiento $R$, mientras que la parte restante constituye el conjunto de validación $V$.
+
+La validación cruzada itera sobre las distintas elecciones posibles del conjunto de validación. Este proceso se repite para cada elección de $V$, entrenando un nuevo modelo en el conjunto complementario $R$. Finalmente, el rendimiento del modelo se obtiene promediando los resultados de las $K$ corridas. En particular, particionamos el conjunto de datos como
+$$
+D = R \cup V, \text{\quad tal que \quad} R \cap V = \emptyset.
+$$
+Donde $V$ es el conjunto de validación. Entrenamos el modelo utilizando los datos de $R$ y, posteriormente, evaluamos el rendimiento del predictor $f$ sobre $V$, utilizando alguna medida de error, por ejemplo, el error cuadrático.
+
+Más precisamente, para cada partición $k$, se produce un predictor $f^{(k)}$, el cual es aplicado al conjunto de validación $V^{(k)}$ para calcular el riesgo empírico
+
+$$
+R(f^{(k)},V^{(k)}).
+$$
+
+Iteramos sobre las distintas formas de elegir los conjuntos de entrenamiento y validación, y calculamos la media de los errores obtenidos.
+
+La validación cruzada aproxima el error de generalización esperado mediante
 
 
-Ahora bien, nuestra matriz $R$ no se trata de números sin significado alguno, en $R$ hay codificados datos sobre la realidad, por ejemplo, podriamos pensar que las filas de $R$ son usuarios de netflix y las columnas son películas. Aquí los datos $r_{ij}$ serían o bien si el usuario ha visto una película o bien cuanta puntuación ha dado un usuario a una pelicula. Tomando este ultimo caso, $r_{ij}$ será la puntuación del usuario $i$ en la película $j$.
+$$\textit{[Insertar gráfico.]}$$
 
-Nuestro objetivo no se trata de aproximar $R$, pues si ya conozco $R$ no hay nada que aproximar. El problema es justamente ese. Un usuario puede ver 10, 20 o quizas 100 películas pero hay miles, por lo tanto en la matriz $R$ habrán pocos datos conocidos (las puntuaciones de las peliculas que vio) y muchisimos datos desconocidos (puntuaciones de películas que no vio). La idea de los sistemas de recomendacion es poder ser capaz de determinar, a traves de los datos conocidos, es inferir el valor de los datos desconocidos, en nuestro ejemplo, cuales películas que el usuario aún no ha visto, le podrían gustar.
 
-Para dar respuesta a esta pregunta hay que, en primer lugar, rellenar las entradas vacías, pues no podemos trabajar con matrices que le faltan datos. Hemos de rellenar las matrices de manera coherente, dependiendo de la naturaleza del objeto.
+Una desventaja potencial de la validación $K$-fold es el costo computacional asociado con entrenar el modelo $K$ veces, lo cual puede resultar muy costoso. Además, en la práctica, generalmente no es suficiente fijarse directamente en los parámetros del modelo de manera aislada.
 
-Para comenzar con este viaje de recomendaciones, veremos un método sencillo y algo costoso pero que funciona bien.
+Necesitamos explorar múltiples parámetros complejos, como pueden ser múltiples parámetros de regularización, que incluso pueden no formar parte directamente de los parámetros del modelo. Evaluar la calidad del modelo dependiendo de estos hiperparámetros puede resultar en un número de corridas que crece exponencialmente con el número de parámetros.
 
- \section{Conceptos latente}
+Una posibilidad es utilizar validación cruzada anidada para buscar buenos hiperparámetros. Sin embargo, la validación cruzada es un problema embarazosamente paralelo, es decir, resulta sencillo separar el problema en muchos problemas pequeños e independientes. Dados suficientes recursos computacionales, la validación cruzada puede realizarse de manera paralela, reduciendo considerablemente el tiempo total de evaluación.
 
-Asumiendo que los datos poseen ciertas características, a priori no evidente, que pueden compartir entre sí, será de gran utilidad poder extraerlas. Más aún nos permitirán estudiar las preferencias de los usuarios a ciertas características y la tendencia de los items a cumplirlas. A estas características ocultas es a lo que denominaremos como \textit{conceptos latentes}.
+\textit{[Insertar dibujo.]}
 
-Dado que la entrada $i,j$ de nuestra matriz de datos $R$ representa la valoración del usuario $i$ sobre el item $j$ y sabiendo que en una factorización donde $R= UV$ el elemento $r_{ij}$ es tal que 
-$$ r_{ij} = \vec{u}_i \cdot \vec{v}_j$$ 
-donde $\vec{u}_i$ es la fila $i$ de la matriz $U$ y $\vec{v}_j$ es la columna $j$ de $V$, entonces la valoración del usuario $i$ sobre el item $j$ depende tanto de $U$ como de $V$. Recordando que 
+\subsection{Gradiente descendiente: búsqueda de direcciones para métodos de búsqueda lineal}
 
-Supongamos que tenemos una matriz conocida $R$ de tamaño $m \times n$ que representa las valoraciones de $m$ usuarios sobre $n$ items. En tal caso podemos utilizar diferentes métodos para factorizarla tal que 
-$$R=UV^T$$
-con $U$ de tamaño $m\times k$ y $V$ de $n\times k$ donde $k$ es el rango de la matriz $R$. 
+Nocedal, pág. 21.
 
-Notemos que $r_{ij}=\vec{u}_i \cdot \vec{v}_j$ donde $\vec{u}_i$ representa la fila $i$ de $U$ y $\vec{v}_j$ la fila $j$ de la matriz $V$. Para nuestro propósito, podemos pensar que cada coordenada del vector $\vec{u}_i$ (de dimensión $k$) representa la afinidad del usuario $i$ al concepto latente correspondiente.
+La dirección de máximo crecimiento $\nabla f_k$ sugiere de manera natural que la dirección opuesta,
 
-De la misma forma podemos pensar que el vector $\vec{v}_j$ también de dimensión $k$ representa la afinidad del item $j$ al concepto latente correspondiente. Así, llamamos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. Incluso si el rango de $R$ fuese mayor que $k$, podriamos aproximarla tal que 
-$$R \approx UV^T$$
-con $U$ y $V$ de rango $k$. De esta manera, podemos calcular su error utilizando la norma de Frobenius tal que
-$$||R - UV||_{F}$$.
+$$
+-\nabla f_k,
+$$
 
-Podemos pensar la aproximación, a su vez, como un problema de optimización, donde queremos minimizar $J=||R - UV||_{F}$.
+es una elección apropiada para buscar direcciones en un método de búsqueda lineal. Intuitivamente, de todas las direcciones posibles, esta es la dirección en la que la función decrece más rápidamente.
 
-Sin embargo, el objetivo de nuestro estudio es predecir datos faltantes de nuestra matriz de valoraciones. En este contexto no tiene sentido computar la norma de Frobenius habida cuenta de que nos faltan entradas. Pero, aun así podemos reescribir la función objetivo en término de los datos observados. En virtu de esto, definamos entonces
-$$S=\{(i,j): r_{ij} \text{ es conocido}\}.$$
+Para verificar esta observación, apelamos al teorema de Taylor, que nos dice que, para toda dirección de búsqueda $p$ y un paso $\alpha$ suficientemente pequeño,
 
-Supongamos que tenemos una aproximación lo suficientemente buena de $R$ mediante el producto $UV^T$, entonces, podriamos preecir las entradas faltantes de la forma 
-$$\hat{r}_{i,j}=\vec{u}_i \cdot \vec{v}_j.$$
-donde $i,j \notin  S$.
+$$\textit{[Insertar gráfico.]}$$
 
-Notemos que la diferencia entre las entradas conocidas $(i,j)$ y la predicción está dada por $$e_{ij}=(r_{ij}-\hat{r}_{ij})=r_{ij}-(\vec{u}_i \cdot \vec{v}_j).$$ Se sigue, entonces, que el problema de minimización a resolver es 
-$$\text{Min}\frac12 \sum_{i,j\in S}e_{ij}^2.$$
-\section{Gradiente Descendiente} 
+La tasa de cambio de $f_k$ en la dirección $p$ en el punto $x_k$ está determinada por el coeficiente de $\alpha$, dado por
+
+$$
+p^T\nabla f_k.
+$$
+
+Por lo tanto, la dirección unitaria de mayor decrecimiento es la solución del problema
+
+$$
+\min_p \; p^T\nabla f_k \qquad \text{sujeto a} \qquad \|p\|=1.
+$$
+Dado que
+$$
+p^T\nabla f_k
+=
+\|p\|\,\|\nabla f_k\|\cos\theta,
+$$
+donde $\theta$ es el ángulo entre $p$ y $\nabla f_k$, y puesto que $p$ es unitario, tenemos
+$$
+p^T\nabla f_k
+=
+\|\nabla f_k\|\cos\theta.
+$$
+Esta expresión alcanza su menor valor cuando $\theta=\pi$, es decir, cuando
+$$
+p=-\frac{\nabla f_k}{\|\nabla f_k\|}.
+$$
+$$\textit{[Insertar gráfico.]}$$
+
+El método de máximo decrecimiento es un método de búsqueda lineal que se mueve en la dirección
+
+$$
+p_k=-\nabla f_k
+$$
+
+en cada paso. El tamaño del paso puede seleccionarse de varias maneras. Una ventaja de este método es que requiere únicamente el cálculo del gradiente y no de las segundas derivadas.
+
+Sin embargo, este método puede ser muy lento en problemas difíciles. Los métodos de búsqueda lineal pueden buscar en otras direcciones distintas de la dirección de máximo decrecimiento. En general, cualquier dirección de decrecimiento que forme un ángulo menor que $\pi/2$ con respecto a $-\nabla f_k$ garantiza una mejora de la función objetivo para un tamaño de paso suficientemente pequeño.
+
+$$\textit{[Insertar grafico.]}$$
+
+
 \section{Gradiente Descendiente Estocástico}
 \section{Regularización}
-Uno de los principales problemas a la hora de trabajar con matrices disperas 
 
+Uno de los principales problemas a la hora de trabajar con matrices dispersas es la escasez de información disponible para realizar las predicciones.
 
-Puede ocurrir, con matrices dispersas, que nuestra aproximación sea teóricamente buena, en el sentido de que el error de nuestro problema (de minimización) sea muy pequeño pero a la luz de los hechos, las predicciones de los no observados no son acordes a lo que uno esperaria. Por ejemplo, si estamos en el contexto de una matriz de calificaciones de usuarios sobre peliculas, sería anormal que se recomiende una película de Terror a quien tiene preferencias claras por películas de Comedia. 
+Puede ocurrir, en el caso de matrices dispersas, que nuestra aproximación sea teóricamente buena, en el sentido de que el error asociado al problema de minimización sea muy pequeño, pero que, en la práctica, las predicciones correspondientes a los valores no observados no sean acordes con lo que esperaríamos.
 
-Para aliviar estos efectos, haremos uso de la \textit{regularización Tikhonov}. Esencialmente buscamos controlar mediante un factor $\lambda >0$ aquellas predicciones sobre valores observados que sean grandes, favoreciendo soluciones más simples.
+Por ejemplo, si nos encontramos en el contexto de una matriz de calificaciones de usuarios sobre películas, podría resultar poco razonable que el modelo recomiende una película de terror a un usuario cuyas preferencias observadas muestran una clara inclinación por las películas de comedia.
 
-(Agregar una comparación grafica entre la distribucion de las predicciones con y sin reguloarizacion)
+Para mitigar estos efectos, haremos uso de la \textit{regularización de Tikhonov}. Esencialmente, buscamos controlar mediante un factor $\lambda>0$ el tamaño de los parámetros que determinan las predicciones, favoreciendo soluciones más simples y evitando que el modelo se ajuste excesivamente a los datos observados.
 
-Matemáticamente, esto es bla bla bla.
+$$\textit{[Agregar gráfico comparativo entre la distribución de las predicciones con y sin regularización.]}$$
 
-$$\text{Min } J = \frac{1}{2} \sum_{(i,j) \in S} e_{ij}^2 + \frac{\lambda}{2} \sum_{i,s} u_{is}^2 + \frac{\lambda}{2} \sum_{j,s} v_{js}^2.$$
+Matemáticamente, incorporamos un término de regularización al problema de minimización. En nuestro caso, utilizaremos una penalización cuadrática sobre los factores que intervienen en la factorización de la matriz. De esta manera, el problema queda dado por
+
+$$
+\min J =
+\frac{1}{2}\sum_{(i,j)\in S}e_{ij}^{2}
++
+\frac{\lambda}{2}\sum_{i,s}u_{is}^{2}
++
+\frac{\lambda}{2}\sum_{j,s}v_{js}^{2}.
+$$
+
+El primer término corresponde al error sobre los valores observados, mientras que los dos términos restantes constituyen la penalización de Tikhonov sobre los factores $U$ y $V$.
+
+El parámetro $\lambda$ controla el compromiso entre ambos objetivos. Para valores pequeños de $\lambda$, el modelo tiene mayor libertad para ajustarse a los datos observados, mientras que valores grandes de $\lambda$ penalizan con mayor intensidad los parámetros de gran magnitud y favorecen soluciones más restringidas.
+
 
 \section{Gradiente Descendiente con Regularización} 
 \section{Gradiente Descendiente Estocástico con Regularización}
