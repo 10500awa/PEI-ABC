@@ -9,7 +9,21 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{xltabular}
+
+
 \usepackage{pgfplots}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{fontspec}
+
+\newfontfamily\fuentedeportada{FacultyGlyphic-Regular}
+\usetikzlibrary{calc, positioning, backgrounds, arrows.meta}
+
+% Definición de colores principales
+\definecolor{ColorPortada}{HTML}{D93B23}
+\definecolor{AzulFondo}{HTML}{D93B23}
+\definecolor{NaranjaTexto}{HTML}{D97350}
+\definecolor{VerdeDecorado}{HTML}{8BD950}
 \pgfplotsset{compat=1.18}
 \usepackage{siunitx}
 \usepackage[
@@ -32,6 +46,15 @@ sorting=nty
 	\author{Arias, Blanc, Comelli.}
 	\title{Sistemas de recomendación}
 	\date{2026}
+	
+	\pagecolor{ColorPortada}
+	\thispagestyle{empty}
+	\include{portada}
+	\newpage
+	\pagecolor{white}
+	\maketitle
+	
+	\thispagestyle{empty}
 	
 	\maketitle
 	
