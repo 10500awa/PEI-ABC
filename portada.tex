@@ -1,43 +1,101 @@
 \begin{titlepage}
 	\centering
 	
-	% Definimos los colores locales para el TikZ
+	% Definimos los colores locales
 	\colorlet{colorRbase}{blue!10}       
 	\colorlet{colorRline}{blue!50}       
 	\colorlet{colorRcell}{blue!40}       
 	\colorlet{colorRtext}{black}         
-	\colorlet{colorRhatBase}{gray!15}    
+	\colorlet{colorRhatBase}{white}      % Base blanca para que resalte sobre el fondo oscuro
 	\colorlet{colorRhatLine}{gray!50}    
 	\colorlet{colorRhatPred}{NaranjaTexto}    
-	\colorlet{colorProj}{VerdeDecorado}        
-	
-	\vspace*{\fill} % Empuja el contenido hacia abajo para centrar en la hoja
-	
-	\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{60}{45}\selectfont, text=black, align=center] at (0,0){Sistemas de \\ Recomendación};
+	\colorlet{colorProj}{white}          % Rayos de proyección en blanco para que brillen  
+	\begin{center}
+		\begin{tikzpicture}
+		\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=white, align=center] at (0,0){Sistemas de \\ Recomendación};
 	\end{tikzpicture}
-	
-	\vfill % IMPORTANTE: Las líneas en blanco antes y después son necesarias
-	
+	\vfill
 	\begin{tikzpicture}[
-		% Configuramos la perspectiva isométrica personalizada
 		x={(-0.866cm,-0.5cm)}, 
 		y={(0.866cm,-0.5cm)}, 
 		z={(0cm,1cm)},
-		scale=1,
+		scale=1, % Un poco más chico para que entre bien la lámpara
 		font=\fuentedeportada
 		]
 		
-		% VARIABLES PARA LUZ EN ÁNGULO RASANTE
+		% VARIABLES 
 		\def\dx{-4}   
-		\def\dy{2} 
+		\def\dy{1} 
 		
+	% ==========================================
+	% 1. LÁMPARA REDONDA (Luz de Concierto)
+	% ==========================================
+	% Puedes seguir cambiando esto para acercarla al borde
+	\coordinate (PosicionLinterna) at (4.5, -4, 10); 
+	
+	\begin{scope}[shift={(PosicionLinterna)}, overlay]
+		% TRUCO: Volvemos a los ejes 2D normales solo dentro de este bloque
+		% para poder dibujar elipses y círculos perfectos sin que se deformen.
+		\tikzset{x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0cm,0cm)}}
+		
+		% Rotamos todo el cuerpo del foco para que apunte hacia abajo a la derecha
+		\begin{scope}[rotate=-45]
+			
+			% --- Soporte (Horquilla) y Cable ---
+			% Brazo metálico que lo sujeta
+			\draw[thick, white, rounded corners=3pt] (-1.25, 1.2) -- (-1.25, 2.0) -- (-6, 2.0);
+
+			% --- Cuerpo del foco (Cilindro) ---
+			% Tapa trasera redondeada
+			\filldraw[GrisLinterna, draw=white, thick] (-2.5, 0) ellipse (0.4 and 1.2);
+			% Tubo principal
+			\filldraw[GrisLinterna, draw=white, thick] (-2.5, -1.2) rectangle (0, 1.2);
+			
+			% Detalles: Anillos decorativos clásicos de los focos de teatro/concierto
+			\draw[white, thick, opacity=0.3] (-0.6, 0) ellipse (0.4 and 1.2);
+			\draw[white, thick, opacity=0.3] (-1.2, 0) ellipse (0.4 and 1.2);
+			\draw[white, thick, opacity=0.3] (-1.8, 0) ellipse (0.4 and 1.2);
+			
+			% Tuerca lateral donde agarra el soporte
+			\filldraw[white] (-1.25, 1.2) circle (0.15);
+			\filldraw[white] (-1.25, -1.2) circle (0.15);
+			
+			% --- Boca de luz ---
+			% Borde frontal
+			\filldraw[black!90, draw=white, thick] (0, 0) ellipse (0.4 and 1.2);
+			
+			% Brillo luminoso interno (cristal del foco)
+			\fill[AzulFondo!90!white, opacity=0.8] (0, 0) ellipse (0.25 and 1.0);
+			\fill[white, opacity=0.9] (0, 0) ellipse (0.1 and 0.4); % Centro más incandescente
+			
+			% --- Puntos de anclaje para la luz ---
+			% Guardamos las coordenadas de los bordes para conectar el haz de luz
+			\coordinate (LuzSup) at (0, 1.2);  
+			\coordinate (LuzInf) at (0, -1.2); 
+		\end{scope}
+	\end{scope}
+	
+	% ==========================================
+	% 2. HAZ DE LUZ (Con huella redondeada)
+	% ==========================================
+	\begin{scope}[on background layer, overlay]
+		% Reemplazamos los vértices rectos en el piso por una curva suave
+		% que simula la elipse proyectada por el foco redondo.
+		\fill[AzulFondo] 
+		(LuzSup) -- 
+		(-7, -1, 0) % Punto de anclaje izquierdo en el piso
+		% Los "controls" empujan la curva hacia el fondo de la perspectiva
+		.. controls (-7, 10, 0) and (6, 11, 0) .. 
+		(3, 2, 0)   % Punto de anclaje derecho en el piso
+		-- (LuzInf) -- 
+		cycle;
+	\end{scope}
+	
 		% ==========================================
 		% 1. CAPA INFERIOR: MATRIZ COMPLETADA
 		% ==========================================
 		\fill[colorRhatBase] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
-		%Grilla
 		\foreach \i in {0,...,5} {
 			\draw[black,thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
 			\draw[black,thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
@@ -60,16 +118,16 @@
 		}
 		
 		% ==========================================
-		% 2. RAYOS DE PROYECCIÓN
+		% 2. RAYOS DE PROYECCIÓN (Líneas guía)
 		% ==========================================
 		\foreach \x/\y in {0/0, 5/0, 0/5, 5/5} {
-			\draw[dashed, thick, colorProj] (\x,\y,6) -- (\x+\dx,\y+\dy,0);
+			\draw[dashed, thick, black] (\x,\y,6) -- (\x+\dx,\y+\dy,0);
 		}
 		
 		% ==========================================
 		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
 		% ==========================================
-		\fill[colorRbase, opacity=0.6] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+		\fill[colorRbase, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
 		
 		\foreach \i in {0,...,5} {
 			\draw[black, thick] (\i,0,6) -- (\i,5,6);
@@ -79,7 +137,7 @@
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
-			\fill[colorRcell, opacity=0.8] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
+			\fill[colorRcell, opacity=0.9] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
 			\draw[colorRline, thick] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
 			\node[text=colorRtext, font=\fuentedeportada] at (\x+0.5, \y+0.5, 6) {\v};
 		}
@@ -91,13 +149,18 @@
 			\node[anchor=south east, text=black] at (\c-0.5, 0, 6) {$i_{\c}$};
 			\node[anchor=south west, text=black] at (0, \c-0.5, 6) {$u_{\c}$};
 		}
+%	\begin{scope}
+%	\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=white, align=center] at (-1.5,0,14){Sistemas de \\ Recomendación};
+%	\end{scope}
+	
+	% Autores en blanco
+%	\begin{scope}
+%		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=white, align=center] at (1.5,3.5,-5){Arias, Blanc, Comelli};
+%	\end{scope}
 	\end{tikzpicture}
-	
-	\vfill % Separación vertical para empujar los nombres hacia abajo
-	
+		\end{center}  
+	\vfill
 	\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=black, align=center] at (0,0){Arias, Blanc, Comelli};
+		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=white, align=center] at (0,0){Arias, Blanc, Comelli};
 	\end{tikzpicture}
-	
-	\vspace*{\fill} % Empuja el contenido hacia arriba para equilibrar la hoja
 \end{titlepage}

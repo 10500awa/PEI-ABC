@@ -1,0 +1,91 @@
+\documentclass[tikz,border=15pt]{standalone}
+\usetikzlibrary{calc, backgrounds}
+
+% Tus colores
+\definecolor{AzulFondo}{HTML}{D93B23} % El rojo del haz de luz
+\definecolor{GrisLinterna}{HTML}{333333}
+
+\begin{document}
+	% Fondo negro para toda la página
+	\pagecolor{black}
+	
+	\begin{tikzpicture}[
+		% Mantenemos la misma perspectiva isométrica
+		x={(-0.866cm,-0.5cm)}, 
+		y={(0.866cm,-0.5cm)}, 
+		z={(0cm,1cm)},
+		scale=1,
+		line join=round % Hace que las esquinas de los trazos sean más suaves
+		]
+		
+		% 1. DEFINIR LAS COORDENADAS PRINCIPALES
+		% --------------------------------------------------
+		% El "Foco" es el punto desde donde nace la luz. 
+		% Valores negativos en X e Y, y alto en Z, lo empujan arriba a la izquierda.
+		\coordinate (FocoIzquierda) at (-3, -3, 10);
+		\coordinate (FocoDerecha) at (-1, -1, 9.5);
+		\coordinate (FocoArriba) at (-2.5, -1, 10.5);
+		\coordinate (FocoAbajo) at (-1.5, -3, 9);
+		
+		% El centro de la apertura de la linterna
+		\coordinate (FocoCentro) at (-2, -2, 9.75);
+		
+		% La parte trasera de la linterna
+		\coordinate (LinternaAtras) at (-4, -4, 11);
+		
+		
+		% 2. HAZ DE LUZ
+		% --------------------------------------------------
+		% Usamos la capa de fondo para asegurarnos de que la luz quede por 
+		% detrás de la linterna (y eventualmente de la matriz flotante)
+		\begin{scope}[on background layer]
+			% Dibujamos un polígono que representa dónde cae la luz en el suelo (Z=0)
+			% y lo conectamos con la apertura de la linterna
+			\fill[AzulFondo] 
+			(FocoIzquierda) -- 
+			(-6, 2, 0) -- % Punto en el piso, a la izquierda
+			(-3, 8, 0) -- % Punto en el piso, más al fondo
+			(6, 8, 0) --  % Punto en el piso, a la derecha
+			(FocoDerecha) -- 
+			cycle;
+		\end{scope}
+		
+		
+		% 3. LA LINTERNA / LÁMPARA
+		% --------------------------------------------------
+		% Cuerpo de la linterna (como un trapecio/cono en perspectiva)
+		\draw[thick, white, fill=GrisLinterna] 
+		(FocoIzquierda) -- 
+		(LinternaAtras) -- 
+		(FocoArriba) -- 
+		cycle;
+		
+		\draw[thick, white, fill=black!80] 
+		(FocoIzquierda) -- 
+		(LinternaAtras) -- 
+		(FocoAbajo) -- 
+		cycle;
+		
+		% Borde delantero (la apertura por donde sale la luz)
+		\draw[thick, white, fill=black!90] 
+		(FocoIzquierda) -- 
+		(FocoArriba) -- 
+		(FocoDerecha) -- 
+		(FocoAbajo) -- 
+		cycle;
+		
+		% Agregamos un brillo simulado dentro de la apertura
+		\fill[AzulFondo!80!white, opacity=0.7] 
+		(FocoIzquierda) -- 
+		(FocoArriba) -- 
+		(FocoDerecha) -- 
+		(FocoAbajo) -- 
+		cycle;
+		
+		% Cable que sale de la parte trasera
+		\draw[thick, white] 
+		(LinternaAtras) to[out=135, in=270] ++(-1, -1.5, 3);
+		
+	\end{tikzpicture}
+	
+\end{document}
