@@ -72,6 +72,8 @@
 			% Guardamos las coordenadas de los bordes para conectar el haz de luz
 			\coordinate (LuzSup) at (0, 1.2);  
 			\coordinate (LuzInf) at (0, -1.2); 
+			\coordinate (LuzSupSom) at (0, 0.6);  
+			\coordinate (LuzInfSom) at (0, -0.6); 
 		\end{scope}
 	\end{scope}
 	
@@ -79,28 +81,44 @@
 	% 2. HAZ DE LUZ (Con huella redondeada)
 	% ==========================================
 	\begin{scope}[on background layer, overlay]
-		% Reemplazamos los vértices rectos en el piso por una curva suave
-		% que simula la elipse proyectada por el foco redondo.
-		\fill[AzulFondo] 
+		
+		
+		
+		% 1. Capas múltiples para el desenfoque del borde
+		\foreach \w in {1, 2, ..., 10} {
+			\draw[AzulFondo, opacity=0.05, line width=\w*5pt] 
+			(LuzSupSom) -- 
+			(-7, -1, 0)
+				.. controls (-7, 10, 0) and (6, 11, 0) .. 
+			(3, 2, 0) 
+			-- (LuzInfSom) -- 
+			cycle;
+		}
+		% 2. Relleno principal (tu código original)
+		\fill[AzulFondo, opacity=0.8] 
 		(LuzSup) -- 
-		(-7, -1, 0) % Punto de anclaje izquierdo en el piso
-		% Los "controls" empujan la curva hacia el fondo de la perspectiva
+		(-7, -1, 0)
 		.. controls (-7, 10, 0) and (6, 11, 0) .. 
-		(3, 2, 0)   % Punto de anclaje derecho en el piso
+		(3, 2, 0)  
 		-- (LuzInf) -- 
 		cycle;
 	\end{scope}
 	
 		% ==========================================
-		% 1. CAPA INFERIOR: MATRIZ COMPLETADA
+		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
 		% ==========================================
-		\fill[colorRhatBase] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
+		% Relleno negro sólido (opacity=1 por defecto). 
+		% Esto "corta" el haz de luz de la capa inferior y se funde con la página.
+		\fill[black] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
+		
+		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
 		\foreach \i in {0,...,5} {
-			\draw[black,thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
-			\draw[black,thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
+			\draw[gray, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
+			\draw[gray, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
 		}
 		
+		% Valores predichos (ColorPortada resaltará excelente sobre el negro)
 		\foreach \x/\y/\v in {
 			0/0/5, 1/0/2, 2/0/3, 3/0/4, 4/0/2,
 			0/1/4, 1/1/3, 2/1/4, 3/1/1, 4/1/5,
@@ -108,21 +126,21 @@
 			0/3/3, 1/3/4, 2/3/5, 3/3/3, 4/3/1,
 			0/4/2, 1/4/1, 2/4/3, 3/4/4, 4/4/5%
 		} {
-			\node[text=colorRhatPred] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=ColorPortada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
+		% Valores originales: cambiados a blanco para que no se pierdan en la sombra
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
-			\node[text=black, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=white, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
-		
 		% ==========================================
 		% 2. RAYOS DE PROYECCIÓN (Líneas guía)
 		% ==========================================
-		\foreach \x/\y in {0/0, 5/0, 0/5, 5/5} {
-			\draw[dashed, thick, black] (\x,\y,6) -- (\x+\dx,\y+\dy,0);
-		}
+%		\foreach \x/\y in {0/0, 5/0, 0/5, 5/5} {
+%			\draw[dashed, thick, black] (\x,\y,6) -- (\x+\dx,\y+\dy,0);
+%		}
 		
 		% ==========================================
 		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
@@ -145,10 +163,10 @@
 		% ==========================================
 		% 4. ETIQUETAS
 		% ==========================================
-		\foreach \c in {1,...,5} {
-			\node[anchor=south east, text=black] at (\c-0.5, 0, 6) {$i_{\c}$};
-			\node[anchor=south west, text=black] at (0, \c-0.5, 6) {$u_{\c}$};
-		}
+%		\foreach \c in {1,...,5} {
+%			\node[anchor=south east, text=black,scale=1.25] at (\c-0.5, 0, 6) {$i_{\c}$};
+%			\node[anchor=south west, text=black,scale=1.25] at (0, \c-0.5, 6) {$u_{\c}$};
+%		}
 %	\begin{scope}
 %	\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=white, align=center] at (-1.5,0,14){Sistemas de \\ Recomendación};
 %	\end{scope}
