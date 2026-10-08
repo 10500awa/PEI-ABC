@@ -39,7 +39,7 @@
 		\tikzset{x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0cm,0cm)}}
 		
 		% Rotamos todo el cuerpo del foco para que apunte hacia abajo a la derecha
-		\begin{scope}[rotate=-45]
+		\begin{scope}[rotate=-43]
 			
 			% --- Soporte (Horquilla) y Cable ---
 			% Brazo metálico que lo sujeta
@@ -47,7 +47,7 @@
 
 			% --- Cuerpo del foco (Cilindro) ---
 			% Tapa trasera redondeada
-			\filldraw[GrisLinterna, draw=white, thick] (-2.5, 0) ellipse (0.4 and 1.2);
+			\filldraw[GrisLinterna, draw=white, thick] (-2.5, 0) ellipse (0.1 and 1.2);
 			% Tubo principal
 			\filldraw[GrisLinterna, draw=white, thick] (-2.5, -1.2) rectangle (0, 1.2);
 			
@@ -104,6 +104,7 @@
 		cycle;
 	\end{scope}
 	
+	\begin{scope}[scale=1.1,xshift=-1cm]
 		% ==========================================
 		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
 		% ==========================================
@@ -135,6 +136,7 @@
 		} {
 			\node[text=white, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
+	\end{scope}
 		% ==========================================
 		% 2. RAYOS DE PROYECCIÓN (Líneas guía)
 		% ==========================================
