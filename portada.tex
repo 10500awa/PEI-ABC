@@ -39,7 +39,7 @@
 		\tikzset{x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0cm,0cm)}}
 		
 		% Rotamos todo el cuerpo del foco para que apunte hacia abajo a la derecha
-		\begin{scope}[rotate=-43]
+		\begin{scope}[rotate=-44]
 			
 			% --- Soporte (Horquilla) y Cable ---
 			% Brazo metálico que lo sujeta
@@ -72,8 +72,8 @@
 			% Guardamos las coordenadas de los bordes para conectar el haz de luz
 			\coordinate (LuzSup) at (0, 1.2);  
 			\coordinate (LuzInf) at (0, -1.2); 
-			\coordinate (LuzSupSom) at (0, 0.6);  
-			\coordinate (LuzInfSom) at (0, -0.6); 
+			\coordinate (LuzSupSom) at (0, 0);  
+			\coordinate (LuzInfSom) at (0, 0); 
 		\end{scope}
 	\end{scope}
 	
@@ -86,7 +86,7 @@
 		
 		% 1. Capas múltiples para el desenfoque del borde
 		\foreach \w in {1, 2, ..., 10} {
-			\draw[AzulFondo, opacity=0.05, line width=\w*5pt] 
+			\draw[AzulFondo, opacity=0.04, line width=\w*5pt] 
 			(LuzSupSom) -- 
 			(-7, -1, 0)
 				.. controls (-7, 10, 0) and (6, 11, 0) .. 
@@ -94,7 +94,7 @@
 			-- (LuzInfSom) -- 
 			cycle;
 		}
-		% 2. Relleno principal (tu código original)
+		 2. Relleno principal (tu código original)
 		\fill[AzulFondo, opacity=0.8] 
 		(LuzSup) -- 
 		(-7, -1, 0)
@@ -104,13 +104,15 @@
 		cycle;
 	\end{scope}
 	
-	\begin{scope}[scale=1.1,xshift=-1cm]
+	\begin{scope}[scale=1.1,xshift=-1cm,opacity=0.8]
+		
+		
 		% ==========================================
 		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
 		% ==========================================
 		
 		% Relleno negro sólido (opacity=1 por defecto). 
-		% Esto "corta" el haz de luz de la capa inferior y se funde con la página.
+
 		\fill[black] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
 		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
@@ -137,13 +139,7 @@
 			\node[text=white, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 	\end{scope}
-		% ==========================================
-		% 2. RAYOS DE PROYECCIÓN (Líneas guía)
-		% ==========================================
-%		\foreach \x/\y in {0/0, 5/0, 0/5, 5/5} {
-%			\draw[dashed, thick, black] (\x,\y,6) -- (\x+\dx,\y+\dy,0);
-%		}
-		
+
 		% ==========================================
 		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
 		% ==========================================
