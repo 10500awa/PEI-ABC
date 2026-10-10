@@ -2,6 +2,7 @@
 	\centering
 	
 	% Definimos los colores locales
+
 	\colorlet{colorRbase}{blue!10}       
 	\colorlet{colorRline}{blue!50}       
 	\colorlet{colorRcell}{blue!40}       
@@ -19,7 +20,7 @@
 		x={(-0.866cm,-0.5cm)}, 
 		y={(0.866cm,-0.5cm)}, 
 		z={(0cm,1cm)},
-		scale=1, % Un poco más chico para que entre bien la lámpara
+		scale=1,
 		font=\fuentedeportada
 		]
 		
@@ -107,6 +108,19 @@
 	\begin{scope}[scale=1.1,xshift=-1cm,opacity=0.8]
 		
 		
+		% 1. Capas múltiples para el desenfoque del borde
+		\foreach \w in {1,...,4} {
+			\draw[black!50!AzulFondo, opacity=.1, line width=\w*3pt] 
+			(\dx,\dy,0) -- 
+			(5+\dx,\dy,0) -- 
+			(5\dx,5+\dy,0) --
+			(\dx,5+\dy,0) -- 
+			cycle;
+			
+		}
+		
+		
+		
 		% ==========================================
 		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
 		% ==========================================
@@ -115,10 +129,13 @@
 
 		\fill[black] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
+		
+		
+		
 		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
 		\foreach \i in {0,...,5} {
-			\draw[gray, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
-			\draw[gray, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
+			\draw[gray!50!black, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
+			\draw[gray!50!black, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
 		}
 		
 		% Valores predichos (ColorPortada resaltará excelente sobre el negro)
@@ -136,19 +153,22 @@
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
+		\fill[colorRcell, opacity=0.5] (\x-3,\y+2,1) -- (\x-2,\y+2,1) -- (\x-2,\y+3,1) -- (\x-3,\y+3,1) -- cycle;
 			\node[text=white, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
+		
+		
+		
+		
 	\end{scope}
 
 		% ==========================================
 		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
 		% ==========================================
-		\fill[colorRbase, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
 		
-		\foreach \i in {0,...,5} {
-			\draw[black, thick] (\i,0,6) -- (\i,5,6);
-			\draw[black, thick] (0,\i,6) -- (5,\i,6);
-		}
+		%color fondo
+		\fill[black!50!AzulFondo, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+		
 		
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
@@ -157,6 +177,13 @@
 			\draw[colorRline, thick] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
 			\node[text=colorRtext, font=\fuentedeportada] at (\x+0.5, \y+0.5, 6) {\v};
 		}
+		
+		%grilla
+		\foreach \i in {0,...,5} {
+			\draw[black, thick] (\i,0,6) -- (\i,5,6);
+			\draw[black, thick] (0,\i,6) -- (5,\i,6);
+		}
+		
 		
 		% ==========================================
 		% 4. ETIQUETAS
