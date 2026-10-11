@@ -135,8 +135,8 @@
 		
 		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
 		\foreach \i in {0,...,5} {
-			\draw[gray!50!onyx, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
-			\draw[gray!50!onyx, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
+			\draw[onyx, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
+			\draw[onyx, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
 		}
 		
 		% Valores predichos (ColorPortada resaltará excelente sobre el negro)
@@ -147,15 +147,15 @@
 			0/3/3, 1/3/4, 2/3/5, 3/3/3, 4/3/1,
 			0/4/2, 1/4/1, 2/4/3, 3/4/4, 4/4/5%
 		} {
-			\node[text=ColorPortada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=AzulFondo] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
 		% Valores originales: cambiados a blanco para que no se pierdan en la sombra
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
-		\fill[colorRcell, opacity=0.5] (\x-3,\y+2,1) -- (\x-2,\y+2,1) -- (\x-2,\y+3,1) -- (\x-3,\y+3,1) -- cycle;
-			\node[text=blanco, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+		\fill[colorRcell, opacity=0.75] (\x-3,\y+2,1) -- (\x-2,\y+2,1) -- (\x-2,\y+3,1) -- (\x-3,\y+3,1) -- cycle;
+			\node[text=onyx, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
 		
