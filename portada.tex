@@ -6,14 +6,15 @@
 	\colorlet{colorRbase}{blue!10}       
 	\colorlet{colorRline}{blue!50}       
 	\colorlet{colorRcell}{blue!40}       
-	\colorlet{colorRtext}{black}         
-	\colorlet{colorRhatBase}{white}      % Base blanca para que resalte sobre el fondo oscuro
+	\colorlet{colorRtext}{onyx}      
+	\definecolor{blanco}{HTML}{E9E9ED} 
+	\colorlet{colorRhatBase}{blanco}      % Base blanca para que resalte sobre el fondo oscuro
 	\colorlet{colorRhatLine}{gray!50}    
 	\colorlet{colorRhatPred}{NaranjaTexto}    
-	\colorlet{colorProj}{white}          % Rayos de proyección en blanco para que brillen  
+	\colorlet{colorProj}{blanco}          % Rayos de proyección en blanco para que brillen  
 	\begin{center}
 		\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=white, align=center] at (0,0){Sistemas de \\ Recomendación};
+		\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=blanco, align=center] at (0,0){Sistemas de \\ Recomendación};
 	\end{tikzpicture}
 	\vfill
 	\begin{tikzpicture}[
@@ -44,30 +45,30 @@
 			
 			% --- Soporte (Horquilla) y Cable ---
 			% Brazo metálico que lo sujeta
-			\draw[thick, white, rounded corners=3pt] (-1.25, 1.2) -- (-1.25, 2.0) -- (-6, 2.0);
+			\draw[thick, blanco, rounded corners=3pt] (-1.25, 1.2) -- (-1.25, 2.0) -- (-6, 2.0);
 
 			% --- Cuerpo del foco (Cilindro) ---
 			% Tapa trasera redondeada
-			\filldraw[GrisLinterna, draw=white, thick] (-2.5, 0) ellipse (0.1 and 1.2);
+			\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, 0) ellipse (0.1 and 1.2);
 			% Tubo principal
-			\filldraw[GrisLinterna, draw=white, thick] (-2.5, -1.2) rectangle (0, 1.2);
+			\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, -1.2) rectangle (0, 1.2);
 			
 			% Detalles: Anillos decorativos clásicos de los focos de teatro/concierto
-			\draw[white, thick, opacity=0.3] (-0.6, 0) ellipse (0.4 and 1.2);
-			\draw[white, thick, opacity=0.3] (-1.2, 0) ellipse (0.4 and 1.2);
-			\draw[white, thick, opacity=0.3] (-1.8, 0) ellipse (0.4 and 1.2);
+			\draw[blanco, thick, opacity=0.3] (-0.6, 0) ellipse (0.4 and 1.2);
+			\draw[blanco, thick, opacity=0.3] (-1.2, 0) ellipse (0.4 and 1.2);
+			\draw[blanco, thick, opacity=0.3] (-1.8, 0) ellipse (0.4 and 1.2);
 			
 			% Tuerca lateral donde agarra el soporte
-			\filldraw[white] (-1.25, 1.2) circle (0.15);
-			\filldraw[white] (-1.25, -1.2) circle (0.15);
+			\filldraw[blanco] (-1.25, 1.2) circle (0.15);
+			\filldraw[blanco] (-1.25, -1.2) circle (0.15);
 			
 			% --- Boca de luz ---
 			% Borde frontal
-			\filldraw[black!90, draw=white, thick] (0, 0) ellipse (0.4 and 1.2);
+			\filldraw[onyx!90, draw=blanco, thick] (0, 0) ellipse (0.4 and 1.2);
 			
 			% Brillo luminoso interno (cristal del foco)
-			\fill[AzulFondo!90!white, opacity=0.8] (0, 0) ellipse (0.25 and 1.0);
-			\fill[white, opacity=0.9] (0, 0) ellipse (0.1 and 0.4); % Centro más incandescente
+			\fill[AzulFondo!90!blanco, opacity=0.8] (0, 0) ellipse (0.25 and 1.0);
+			\fill[blanco, opacity=0.9] (0, 0) ellipse (0.1 and 0.4); % Centro más incandescente
 			
 			% --- Puntos de anclaje para la luz ---
 			% Guardamos las coordenadas de los bordes para conectar el haz de luz
@@ -110,7 +111,7 @@
 		
 		% 1. Capas múltiples para el desenfoque del borde
 		\foreach \w in {1,...,4} {
-			\draw[black!50!AzulFondo, opacity=.1, line width=\w*3pt] 
+			\draw[onyx!50!AzulFondo, opacity=.1, line width=\w*3pt] 
 			(\dx,\dy,0) -- 
 			(5+\dx,\dy,0) -- 
 			(5\dx,5+\dy,0) --
@@ -127,15 +128,15 @@
 		
 		% Relleno negro sólido (opacity=1 por defecto). 
 
-		\fill[black] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
+		\fill[onyx] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
 		
 		
 		
 		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
 		\foreach \i in {0,...,5} {
-			\draw[gray!50!black, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
-			\draw[gray!50!black, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
+			\draw[gray!50!onyx, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
+			\draw[gray!50!onyx, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
 		}
 		
 		% Valores predichos (ColorPortada resaltará excelente sobre el negro)
@@ -154,7 +155,7 @@
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
 		\fill[colorRcell, opacity=0.5] (\x-3,\y+2,1) -- (\x-2,\y+2,1) -- (\x-2,\y+3,1) -- (\x-3,\y+3,1) -- cycle;
-			\node[text=white, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=blanco, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
 		
@@ -167,7 +168,7 @@
 		% ==========================================
 		
 		%color fondo
-		\fill[black!50!AzulFondo, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+		\fill[onyx!50!AzulFondo, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
 		
 		
 		\foreach \x/\y/\v in {
@@ -180,8 +181,8 @@
 		
 		%grilla
 		\foreach \i in {0,...,5} {
-			\draw[black, thick] (\i,0,6) -- (\i,5,6);
-			\draw[black, thick] (0,\i,6) -- (5,\i,6);
+			\draw[onyx, thick] (\i,0,6) -- (\i,5,6);
+			\draw[onyx, thick] (0,\i,6) -- (5,\i,6);
 		}
 		
 		
@@ -189,21 +190,21 @@
 		% 4. ETIQUETAS
 		% ==========================================
 %		\foreach \c in {1,...,5} {
-%			\node[anchor=south east, text=black,scale=1.25] at (\c-0.5, 0, 6) {$i_{\c}$};
-%			\node[anchor=south west, text=black,scale=1.25] at (0, \c-0.5, 6) {$u_{\c}$};
+%			\node[anchor=south east, text=onyx,scale=1.25] at (\c-0.5, 0, 6) {$i_{\c}$};
+%			\node[anchor=south west, text=onyx,scale=1.25] at (0, \c-0.5, 6) {$u_{\c}$};
 %		}
 %	\begin{scope}
-%	\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=white, align=center] at (-1.5,0,14){Sistemas de \\ Recomendación};
+%	\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=blanco, align=center] at (-1.5,0,14){Sistemas de \\ Recomendación};
 %	\end{scope}
 	
 	% Autores en blanco
 %	\begin{scope}
-%		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=white, align=center] at (1.5,3.5,-5){Arias, Blanc, Comelli};
+%		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=blanco, align=center] at (1.5,3.5,-5){Arias, Blanc, Comelli};
 %	\end{scope}
 	\end{tikzpicture}
 		\end{center}  
 	\vfill
 	\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=white, align=center] at (0,0){Arias, Blanc, Comelli};
+		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=blanco, align=center] at (0,0){Arias, Blanc, Comelli};
 	\end{tikzpicture}
 \end{titlepage}
