@@ -106,40 +106,44 @@
 		cycle;
 	\end{scope}
 	
-	\begin{scope}[scale=1.1,xshift=-1cm,opacity=0.8]
+	\begin{scope}[scale=1.1, xshift=-1cm, opacity=0.8]
 		
-		
-		% 1. Capas múltiples para el desenfoque del borde
+		% 1. Capas múltiples para el desenfoque del borde (Typo corregido)
 		\foreach \w in {1,...,4} {
 			\draw[onyx!50!AzulFondo, opacity=.1, line width=\w*3pt] 
 			(\dx,\dy,0) -- 
 			(5+\dx,\dy,0) -- 
-			(5\dx,5+\dy,0) --
+			(5+\dx,5+\dy,0) -- % <- Se agregó el signo '+' faltante
 			(\dx,5+\dy,0) -- 
 			cycle;
-			
 		}
-		
-		
 		
 		% ==========================================
 		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
 		% ==========================================
 		
-		% Relleno negro sólido (opacity=1 por defecto). 
-
+		% Fondo general
 		\fill[onyx] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
 		
+		% Celdas conocidas en azul (Coordenadas relativas exactas corregidas)
+		\foreach \x/\y/\v in {
+			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
+		} {
+			\fill[colorRcell, opacity=0.75] 
+			(\x+\dx, \y+\dy, 0) -- 
+			(\x+1+\dx, \y+\dy, 0) -- 
+			(\x+1+\dx, \y+1+\dy, 0) -- 
+			(\x+\dx, \y+1+\dy, 0) -- 
+			cycle;
+		}
 		
-		
-		
-		% Cuadrícula en gris para que sea sutilmente visible dentro de la sombra
+		% Cuadrícula en gris (Dibujada después del fondo para no ser tapada)
 		\foreach \i in {0,...,5} {
 			\draw[onyx, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
 			\draw[onyx, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
 		}
 		
-		% Valores predichos (ColorPortada resaltará excelente sobre el negro)
+		% Valores predichos
 		\foreach \x/\y/\v in {
 			0/0/5, 1/0/2, 2/0/3, 3/0/4, 4/0/2,
 			0/1/4, 1/1/3, 2/1/4, 3/1/1, 4/1/5,
@@ -147,19 +151,15 @@
 			0/3/3, 1/3/4, 2/3/5, 3/3/3, 4/3/1,
 			0/4/2, 1/4/1, 2/4/3, 3/4/4, 4/4/5%
 		} {
-			\node[text=AzulFondo,opacity=1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=AzulFondo, opacity=1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
-		% Valores originales: cambiados a blanco para que no se pierdan en la sombra
+		% Valores originales (Texto en blanco para lograr contraste sobre onyx)
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
-		\fill[colorRcell, opacity=0.75] (\x-3,\y+2,1) -- (\x-2,\y+2,1) -- (\x-2,\y+3,1) -- (\x-3,\y+3,1) -- cycle;
-			\node[text=onyx, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=blanco, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
-		
-		
-		
 		
 	\end{scope}
 
