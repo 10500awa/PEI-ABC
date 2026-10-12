@@ -1,17 +1,12 @@
 \begin{titlepage}
 	\centering
 	
-	% Definimos los colores locales
-
-	\colorlet{colorRbase}{blue!10}       
-	\colorlet{colorRline}{blue!50}       
+	\definecolor{RojoLuz}{HTML}{D93B23}
+	\definecolor{GrisLinterna}{HTML}{121311}
+	\definecolor{onyx}{HTML}{121311}
+	\definecolor{ColorPortada}{HTML}{D93B23}
+	\definecolor{blanco}{HTML}{E9E9ED}
 	\colorlet{colorRcell}{blue!40}       
-	\colorlet{colorRtext}{onyx}      
-	\definecolor{blanco}{HTML}{E9E9ED} 
-	\colorlet{colorRhatBase}{blanco}      % Base blanca para que resalte sobre el fondo oscuro
-	\colorlet{colorRhatLine}{gray!50}    
-	\colorlet{colorRhatPred}{NaranjaTexto}    
-	\colorlet{colorProj}{blanco}          % Rayos de proyección en blanco para que brillen  
 	\begin{center}
 		\begin{tikzpicture}
 		\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=blanco, align=center] at (0,0){Sistemas de \\ Recomendación};
@@ -67,15 +62,15 @@
 			\filldraw[onyx!90, draw=blanco, thick] (0, 0) ellipse (0.4 and 1.2);
 			
 			% Brillo luminoso interno (cristal del foco)
-			\fill[AzulFondo!90!onyx, opacity=1] (0, 0) ellipse (0.25 and 1.0);
+			\fill[RojoLuz!90!onyx, opacity=1] (0, 0) ellipse (0.25 and 1.0);
 %			\fill[blanco, opacity=0.9] (0, 0) ellipse (0.1 and 0.4); % Centro más incandescente
 			
 			% --- Puntos de anclaje para la luz ---
 			% Guardamos las coordenadas de los bordes para conectar el haz de luz
 			\coordinate (LuzSup) at (0, 1);  
 			\coordinate (LuzInf) at (0, -1); 
-			\coordinate (LuzSupSom) at (1,-0.5);  
-			\coordinate (LuzInfSom) at (1, -0.5); 
+			\coordinate (LuzSupSom) at (0.5,0.4);  
+			\coordinate (LuzInfSom) at (0.5, -0.4); 
 		\end{scope}
 	\end{scope}
 	
@@ -88,16 +83,16 @@
 		
 		% 1. Capas múltiples para el desenfoque del borde
 		\foreach \w in {1, 2, ..., 7} {
-			\draw[AzulFondo, opacity=0.04, line width=\w*5pt] 
+			\draw[RojoLuz, opacity=0.04, line width=\w*4pt] 
 			(LuzSupSom) -- 
-			(-7, -1, 0)
+			(-7, 0, 0)
 				.. controls (-7, 10, 0) and (6, 11, 0) .. 
 			(3, 2, 0) 
 			-- (LuzInfSom) -- 
 			cycle;
 		}
 		 2. Relleno principal 
-		\fill[AzulFondo!90!onyx, opacity=0.9] 
+		\fill[RojoLuz!90!onyx, opacity=0.9] 
 		(LuzSup) -- 
 		(-7, 0, 0)
 		.. controls (-7, 10, 0) and (6, 11, 0) .. 
@@ -110,7 +105,7 @@
 		
 		% 1. Capas múltiples para el desenfoque del borde (Typo corregido)
 		\foreach \w in {1,...,4} {
-			\draw[onyx!50!AzulFondo, opacity=.1, line width=\w*3pt] 
+			\draw[onyx!50!RojoLuz, opacity=.1, line width=\w*3pt] 
 			(\dx,\dy,0) -- 
 			(5+\dx,\dy,0) -- 
 			(5+\dx,5+\dy,0) -- % <- Se agregó el signo '+' faltante
@@ -151,32 +146,33 @@
 			0/3/3, 1/3/4, 2/3/5, 3/3/3, 4/3/1,
 			0/4/2, 1/4/1, 2/4/3, 3/4/4, 4/4/5%
 		} {
-			\node[text=AzulFondo, opacity=1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
-		}
-		
-		% Valores originales (Texto en blanco para lograr contraste sobre onyx)
-		\foreach \x/\y/\v in {
-			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
-		} {
-			\node[text=blanco, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+			\node[text=blanco, opacity=1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
 		}
 		
 	\end{scope}
-
+	
+	%valores originales en matriz completa
+	\begin{scope}[scale=1.1, xshift=-1cm]
+		\foreach \x/\y/\v in {
+			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
+		} {
+			\node[text=onyx, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+		}
+	\end{scope}
 		% ==========================================
 		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
 		% ==========================================
 		
 		%color fondo
-		\fill[onyx!50!AzulFondo, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+		\fill[onyx!50!RojoLuz, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
 		
 		
 		\foreach \x/\y/\v in {
 			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
 		} {
 			\fill[colorRcell, opacity=0.9] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
-			\draw[colorRline, thick] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
-			\node[text=colorRtext, font=\fuentedeportada] at (\x+0.5, \y+0.5, 6) {\v};
+			\draw[colorRcell, thick] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
+			\node[text=onyx, font=\fuentedeportada] at (\x+0.5, \y+0.5, 6) {\v};
 		}
 		
 		%grilla

@@ -1,7 +1,6 @@
-
 	% Table 1: Experimental setup
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{Esquema del experimento para 10-fold cross-validation.}
 		\label{tab:setup}
@@ -24,7 +23,7 @@
 	% ---------------------------------------------------------------
 	% Table 2: Summary of all combinations (ranked by mean test RMSE)
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{Resultados de la validación cruzada, listados por RMSE.
 			The generalization gap is the mean test RMSE minus the mean train RMSE.}
@@ -47,7 +46,7 @@
 	% ---------------------------------------------------------------
 	% Table 3: Per-fold test RMSE
 	% ---------------------------------------------------------------
-	\begin{table}[h]
+	\begin{table}[ht]
 		\centering
 		\caption{Test RMSE per fold for each number of factors $k$ ($\lambda = 0.01$).}
 		\label{tab:fold-test}
@@ -77,7 +76,7 @@
 	% ---------------------------------------------------------------
 	% Table 4: Per-fold final train RMSE
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{Final train RMSE per fold for each number of factors $k$ ($\lambda = 0.01$).
 			The initial train RMSE was approximately 3.653 in every fold.}
@@ -107,7 +106,7 @@
 	% ---------------------------------------------------------------
 	% Table 5: Per-fold epochs to convergence
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{Epochs until convergence per fold for each number of factors $k$
 			($\lambda = 0.01$). All 70 fits converged.}
@@ -139,7 +138,7 @@
 	% ---------------------------------------------------------------
 	% Table 6: Per-fold running time (seconds)
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{Running time per fold in seconds for each number of factors $k$
 			($\lambda = 0.01$). The last row gives the total time per combination.}
@@ -169,7 +168,7 @@
 	% ---------------------------------------------------------------
 	% Table 7: Final refit on all data (k = 2, lambda = 0.01)
 	% ---------------------------------------------------------------
-	\begin{table}[htbp]
+	\begin{table}[ht]
 		\centering
 		\caption{SGD refit on all 100\,836 observed ratings with the best combination
 			($k = 2$, $\lambda = 0.01$, $\gamma = 0.01$). Total drop in RMSE: 2.9080 (79.6\%);

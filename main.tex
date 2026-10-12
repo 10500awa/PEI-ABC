@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[11pt,oneside]{book}
 \usepackage[a4paper,left=2.75cm,right=2.6cm,top=2.5cm,bottom=2.5cm,heightrounded]{geometry}
 \usepackage[spanish,es-tabla]{babel}
 \unaccentedoperators
@@ -11,28 +11,20 @@
 \usepackage{xltabular}
 \usepackage{pgfplots}
 \usepackage[dvipsnames]{xcolor}
+\definecolor{onyx}{HTML}{121311}
+
 \usepackage{tikz}
-\usepackage{fontspec}
-
-\newfontfamily\fuentedeportada[Path=./fonts/]{Michelangelus-Bold.ttf}
-\usepackage{unicode-math}
-
-% Configura la fuente principal de texto y la fuente matemática
-\setmainfont{STIX Two Text}
-\setmathfont{STIX Two Math}
-
 
 \usetikzlibrary{calc, positioning, backgrounds, arrows.meta}
-\definecolor{AzulFondo}{HTML}{D93B23} % El rojo del haz de luz
-\definecolor{Azul}{HTML}{4023D9}
-\definecolor{GrisLinterna}{HTML}{121311}
-	\definecolor{onyx}{HTML}{121311}
-% Definición de colores principales
-\definecolor{ColorPortada}{HTML}{D93B23}
-\definecolor{NaranjaTexto}{HTML}{D97350}
-\definecolor{VerdeDecorado}{HTML}{8BD950}
+
+\usepackage{fontspec}
+\newfontfamily\fuentedeportada[Path=./fonts/]{Michelangelus-Bold.ttf}
+\usepackage{unicode-math}
+\setmainfont{STIX Two Text}
+\setmathfont{STIX Two Math}
 \pgfplotsset{compat=1.18}
 \usepackage{siunitx}
+
 \usepackage[
 backend=biber,
 style=numeric-comp,
@@ -50,9 +42,7 @@ sorting=nty
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \begin{document}
 	
-	\author{Arias, Blanc, Comelli.}
-	\title{Sistemas de recomendación}
-	\date{2026}
+	
 	
 	\pagecolor{onyx}
 	\thispagestyle{empty}
@@ -60,10 +50,30 @@ sorting=nty
 
 
 
+
 	\pagecolor{white}
 	\thispagestyle{empty}
+	\author{
+		W. Adrián Arias \\
+		%\texttt{}
+		\and
+		Nicolás Blanc \\
+		%\texttt{}
+		\and
+		Jerónimo Comelli\\
+		%\texttt{}
+	}
+	\title{Sistemas de recomendación}
+	\date{2026}
+	\maketitle\thispagestyle{empty}
 	
-	\maketitle
+	%%%Numeración para la tabla de contenidos
+	\frontmatter
+	\tableofcontents
+	
+	%numeracion del contenido
+	\mainmatter
+	
 	
 	\include{chapters/chapter00}
 	\include{chapters/chapter01}
