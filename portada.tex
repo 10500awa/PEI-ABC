@@ -9,9 +9,11 @@
 	\colorlet{colorRcell}{blue!40}       
 	\begin{center}
 		\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=blanco, align=center] at (0,0){Sistemas de \\ Recomendación};
+		\node[font=\fuentedeportada\fontsize{56}{55}\selectfont, text=blanco, align=center] at (0,0){Sistemas de};
+		\node[font=\fuentedeportada\fontsize{40}{55}\selectfont, text=blanco, align=center] at (0,-2){ Recomendación};
 	\end{tikzpicture}
 	\vfill
+	\vspace{2cm}
 	\begin{tikzpicture}[
 		x={(-0.866cm,-0.5cm)}, 
 		y={(0.866cm,-0.5cm)}, 
@@ -83,7 +85,7 @@
 		
 		% 1. Capas múltiples para el desenfoque del borde
 		\foreach \w in {1, 2, ..., 7} {
-			\draw[RojoLuz, opacity=0.04, line width=\w*4pt] 
+			\draw[RojoLuz, opacity=0.02, line width=\w*4pt] 
 			(LuzSupSom) -- 
 			(-7, 0, 0)
 				.. controls (-7, 10, 0) and (6, 11, 0) .. 
@@ -201,7 +203,7 @@
 		\end{center}  
 	\vfill
 	\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{25}{25}\selectfont, text=blanco, align=center] at (0,0){Arias, Blanc, Comelli};
+		\node[font=\fuentedeportada\fontsize{28}{25}\selectfont, text=blanco, align=center] at (0,0){\hfill Arias, Blanc, Comelli \hfill};
 	\end{tikzpicture}
 	\vspace{1cm}
 \end{titlepage}
