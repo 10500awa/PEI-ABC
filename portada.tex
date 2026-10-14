@@ -1,209 +1,313 @@
 \begin{titlepage}
 	\centering
+	\providecommand{\fuentedeportada}{}
 	
+	% Paleta de colores
 	\definecolor{RojoLuz}{HTML}{D93B23}
+	\definecolor{AmbarLuz}{HTML}{F59E0B}
 	\definecolor{GrisLinterna}{HTML}{121311}
 	\definecolor{onyx}{HTML}{121311}
 	\definecolor{ColorPortada}{HTML}{D93B23}
 	\definecolor{blanco}{HTML}{E9E9ED}
-	\colorlet{colorRcell}{blue!40}       
+	\colorlet{colorRcell}{blue!45!cyan!80}
+	
 	\begin{center}
+		% ==========================================
+		% BLOQUE DE TÍTULO
+		% ==========================================
 		\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{56}{55}\selectfont, text=blanco, align=center] at (0,0){Sistemas de};
-		\node[font=\fuentedeportada\fontsize{40}{55}\selectfont, text=blanco, align=center] at (0,-2){ Recomendación};
-	\end{tikzpicture}
-	\vfill
-	\vspace{2cm}
-	\begin{tikzpicture}[
-		x={(-0.866cm,-0.5cm)}, 
-		y={(0.866cm,-0.5cm)}, 
-		z={(0cm,1cm)},
-		scale=1,
-		font=\fuentedeportada
-		]
-		
-		% VARIABLES 
-		\def\dx{-4}   
-		\def\dy{1} 
-		
-	% ==========================================
-	% 1. LÁMPARA REDONDA (Luz de Concierto)
-	% ==========================================
-	% Puedes seguir cambiando esto para acercarla al borde
-	\coordinate (PosicionLinterna) at (4.5, -4,9.25); 
-	
-	\begin{scope}[shift={(PosicionLinterna)}, overlay]
-		% TRUCO: Volvemos a los ejes 2D normales solo dentro de este bloque
-		% para poder dibujar elipses y círculos perfectos sin que se deformen.
-		\tikzset{x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0cm,0cm)}}
-		
-		% Rotamos todo el cuerpo del foco para que apunte hacia abajo a la derecha
-		\begin{scope}[rotate=-44]
+			\node[font=\fuentedeportada\fontsize{62}{55}\selectfont, text=blanco, align=center] at (0,0) {Sistemas de};
+			\node[font=\fuentedeportada\fontsize{44}{50}\selectfont, text=blanco, align=center] at (0,-1.85) {Recomendación};
 			
-			% --- Soporte (Horquilla) y Cable ---
-			% Brazo metálico que lo sujeta
-			\draw[thick, blanco, rounded corners=3pt] (-1.25, 1.2) -- (-1.25, 2.0) -- (-6, 2.0);
-
-			% --- Cuerpo del foco (Cilindro) ---
-			% Tapa trasera redondeada
-			\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, 0) ellipse (0.1 and 1.2);
-			% Tubo principal
-			\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, -1.2) rectangle (0, 1.2);
-			
-			% Detalles: Anillos decorativos clásicos de los focos de teatro/concierto
-			\draw[blanco, thick, opacity=0.3] (-0.6, 0) ellipse (0.4 and 1.2);
-			\draw[blanco, thick, opacity=0.3] (-1.2, 0) ellipse (0.4 and 1.2);
-			\draw[blanco, thick, opacity=0.3] (-1.8, 0) ellipse (0.4 and 1.2);
-			
-			% Tuerca lateral donde agarra el soporte
-			\filldraw[blanco] (-1.25, 1.2) circle (0.15);
-			\filldraw[blanco] (-1.25, -1.2) circle (0.15);
-			
-			% --- Boca de luz ---
-			% Borde frontal
-			\filldraw[onyx!90, draw=blanco, thick] (0, 0) ellipse (0.4 and 1.2);
-			
-			% Brillo luminoso interno (cristal del foco)
-			\fill[RojoLuz!90!onyx, opacity=1] (0, 0) ellipse (0.25 and 1.0);
-%			\fill[blanco, opacity=0.9] (0, 0) ellipse (0.1 and 0.4); % Centro más incandescente
-			
-			% --- Puntos de anclaje para la luz ---
-			% Guardamos las coordenadas de los bordes para conectar el haz de luz
-			\coordinate (LuzSup) at (0, 1);  
-			\coordinate (LuzInf) at (0, -1); 
-			\coordinate (LuzSupSom) at (0.5,0.4);  
-			\coordinate (LuzInfSom) at (0.5, -0.4); 
-		\end{scope}
-	\end{scope}
-	
-	% ==========================================
-	% 2. HAZ DE LUZ (Con huella redondeada)
-	% ==========================================
-	\begin{scope}[overlay]
+			% Detalle editorial (línea geométrica con acento de matriz)
+			\draw[RojoLuz, line width=1.4pt] (-4.2,-2.75) -- (-0.4,-2.75);
+			\fill[colorRcell] (-0.12,-2.87) rectangle (0.12,-2.63);
+			\draw[RojoLuz, line width=1.4pt] (0.4,-2.75) -- (4.2,-2.75);
+		\end{tikzpicture}
 		
+		\vfill
+		\vspace{1.8cm}
 		
-		
-		% 1. Capas múltiples para el desenfoque del borde
-		\foreach \w in {1, 2, ..., 7} {
-			\draw[RojoLuz, opacity=0.02, line width=\w*4pt] 
-			(LuzSupSom) -- 
-			(-7, 0, 0)
+		% ==========================================
+		% ILUSTRACIÓN PRINCIPAL 3D
+		% ==========================================
+		\begin{tikzpicture}[
+			x={(-0.866cm,-0.5cm)}, 
+			y={(0.866cm,-0.5cm)}, 
+			z={(0cm,1cm)},
+			scale=1,
+			font=\fuentedeportada
+			]
+			
+			% VARIABLES DE DESPLAZAMIENTO DE LA SOMBRA
+			\def\dx{-4}   
+			\def\dy{1} 
+			
+			% Pre-cálculo de coordenadas clave para conectar matriz y sombra
+			\begin{scope}[scale=1.1, xshift=-1cm]
+				\coordinate (S00) at (\dx, \dy, 0);
+				\coordinate (S50) at (5+\dx, \dy, 0);
+				\coordinate (S55) at (5+\dx, 5+\dy, 0);
+				\coordinate (S05) at (\dx, 5+\dy, 0);
+				\foreach \k/\x/\y in {1/0/0, 2/2/1, 3/1/2, 4/4/3, 5/2/4} {
+					\coordinate (SCel\k) at (\x+0.5+\dx, \y+0.5+\dy, 0);
+				}
+			\end{scope}
+			\coordinate (M00) at (0,0,6);
+			\coordinate (M50) at (5,0,6);
+			\coordinate (M55) at (5,5,6);
+			\coordinate (M05) at (0,5,6);
+			\foreach \k/\x/\y in {1/0/0, 2/2/1, 3/1/2, 4/4/3, 5/2/4} {
+				\coordinate (MCel\k) at (\x+0.5, \y+0.5, 6);
+			}
+			
+			% ==========================================
+			% 1. LÁMPARA (LA MATEMÁTICA)
+			% ==========================================
+			\coordinate (PosicionLinterna) at (4, -4.5, 9.25); 
+			
+			\begin{scope}[shift={(PosicionLinterna)}, overlay]
+				% Ejes 2D locales para dibujar el proyector sin distorsión isométrica
+				\tikzset{x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0cm,0cm)}}
+				
+				\begin{scope}[rotate=-44]
+					% Soporte (Horquilla) y brazo estructural
+					\draw[line width=2pt, blanco!85, rounded corners=3pt] (-1.25, 1.25) -- (-1.25, 2.05) -- (-6, 2.05);
+					\draw[thin, blanco!40, rounded corners=3pt] (-1.25, 1.45) -- (-1.25, 1.85) -- (-5.5, 1.85);
+					
+					% Casquete trasero
+					\filldraw[GrisLinterna, draw=blanco!90, thick] (-2.8, 0) ellipse (0.28 and 0.95);
+					\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, 0) ellipse (0.15 and 1.2);
+					
+					% Cuerpo cilíndrico principal
+					\filldraw[GrisLinterna, draw=blanco, thick] (-2.5, -1.2) rectangle (0, 1.2);
+					
+					% Líneas longitudinales de refrigeración / precisión geométrica
+					\foreach \yy in {-0.9, -0.6, 0.6, 0.9} {
+						\draw[blanco, opacity=0.18, very thin] (-2.5, \yy) -- (-0.2, \yy);
+					}
+					
+					% Anillos estructurales del proyector
+					\draw[blanco, thick, opacity=0.35] (-0.6, 0) ellipse (0.38 and 1.2);
+					\draw[blanco, thick, opacity=0.35] (-1.25, 0) ellipse (0.38 and 1.2);
+					\draw[blanco, thick, opacity=0.35] (-1.9, 0) ellipse (0.38 and 1.2);
+					
+					% Rótulas laterales de sujeción
+					\filldraw[GrisLinterna, draw=blanco, thick] (-1.25, 1.2) circle (0.18);
+					\fill[blanco] (-1.25, 1.2) circle (0.07);
+					\filldraw[GrisLinterna, draw=blanco, thick] (-1.25, -1.2) circle (0.18);
+					\fill[blanco] (-1.25, -1.2) circle (0.07);
+					
+					% Boca de luz y lente de Fresnel (Geometría óptica)
+					\filldraw[onyx!95, draw=blanco, line width=1.1pt] (0, 0) ellipse (0.42 and 1.22);
+					\fill[RojoLuz!92!onyx] (0, 0) ellipse (0.30 and 1.05);
+					\fill[RojoLuz!70!AmbarLuz, opacity=0.85] (0, 0) ellipse (0.18 and 0.70);
+					\fill[blanco, opacity=0.75] (0, 0) ellipse (0.07 and 0.32);
+					
+					% Retícula óptica sutil en la lente
+					\draw[blanco, opacity=0.35, very thin] (0, 0) ellipse (0.24 and 0.88);
+					\draw[blanco, opacity=0.35, very thin] (0, -1.05) -- (0, 1.05);
+					\draw[blanco, opacity=0.35, very thin] (-0.30, 0) -- (0.30, 0);
+					
+					% Puntos de anclaje para el haz de luz
+					\coordinate (LuzSup) at (0, 1.05);  
+					\coordinate (LuzInf) at (0, -1.05); 
+					\coordinate (LuzCentro) at (0, 0);
+					\coordinate (LuzSupSom) at (0.4, 0.5);  
+					\coordinate (LuzInfSom) at (0.4, -0.5); 
+				\end{scope}
+			\end{scope}
+			
+			% ==========================================
+			% 2. HAZ DE LUZ (LOS MÉTODOS)
+			% ==========================================
+			\begin{scope}[overlay]
+				% 2.1 Difuminado atmosférico exterior
+				\foreach \w in {1, 2, ..., 8} {
+					\draw[RojoLuz, opacity=0.022, line width=\w*4.2pt, line join=round] 
+					(LuzSupSom) -- 
+					(-7, 0, 0)
+					.. controls (-7, 10, 0) and (6, 11, 0) .. 
+					(3, 2, 0) 
+					-- (LuzInfSom) -- 
+					cycle;
+				}
+				
+				% 2.2 Cono principal de luz
+				\fill[RojoLuz!88!onyx, opacity=0.92] 
+				(LuzSup) -- 
+				(-7, 0, 0)
 				.. controls (-7, 10, 0) and (6, 11, 0) .. 
-			(3, 2, 0) 
-			-- (LuzInfSom) -- 
-			cycle;
-		}
-		 2. Relleno principal 
-		\fill[RojoLuz!90!onyx, opacity=0.9] 
-		(LuzSup) -- 
-		(-7, 0, 0)
-		.. controls (-7, 10, 0) and (6, 11, 0) .. 
-		(3, 2, 0)  
-		-- (LuzInf) -- 
-		cycle;
-	\end{scope}
+				(3, 2, 0)  
+				-- (LuzInf) -- 
+				cycle;
+				
+				% 2.3 Núcleo cálido de alta intensidad en el centro del haz
+				\fill[RojoLuz!80!AmbarLuz, opacity=0.16] 
+				(LuzCentro) -- 
+				(-4.5, 2.5, 0)
+				.. controls (-4, 8.5, 0) and (3, 9, 0) .. 
+				(1.5, 3.5, 0)  
+				-- cycle;
+				
+				% 2.4 Haces direccionales (rayos del método proyectivo)
+%				\foreach \rx/\ry in {-5.5/1.5, -3.5/4.0, -1.0/6.0, 1.2/5.0, 2.2/3.2} {
+%					\draw[blanco!70!AmbarLuz, opacity=0.12, line width=1.1pt] (LuzCentro) -- (\rx, \ry, 0);
+%				}
+			\end{scope}
+			
+			% ==========================================
+			% 3. CAPA INFERIOR: SOMBRA / MATRIZ COMPLETADA (LA RECOMENDACIÓN)
+			% ==========================================
+			\begin{scope}[scale=1.1, xshift=-1cm, opacity=0.92]
+				
+				% Penumbra exterior de la sombra sobre el suelo iluminado
+				\foreach \w in {1,...,5} {
+					\draw[onyx!65!RojoLuz, opacity=0.14, line width=\w*3.2pt, line join=round] 
+					(\dx,\dy,0) -- 
+					(5+\dx,\dy,0) -- 
+					(5+\dx,5+\dy,0) -- 
+					(\dx,5+\dy,0) -- 
+					cycle;
+				}
+				
+				% Fondo general de la matriz proyectada (Sombra)
+				\fill[onyx!92!RojoLuz] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
+				
+				% Celdas predichas (leve matiz cálido para evidenciar la acción de la luz)
+				\foreach \x in {0,...,4} {
+					\foreach \y in {0,...,4} {
+						\fill[onyx!82!RojoLuz] 
+						(\x+0.06+\dx, \y+0.06+\dy, 0) -- 
+						(\x+0.94+\dx, \y+0.06+\dy, 0) -- 
+						(\x+0.94+\dx, \y+0.94+\dy, 0) -- 
+						(\x+0.06+\dx, \y+0.94+\dy, 0) -- 
+						cycle;
+					}
+				}
+				
+				% Celdas conocidas preservadas en la proyección (en azul)
+				\foreach \x/\y/\v in {
+					0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
+				} {
+					\fill[colorRcell, opacity=0.82] 
+					(\x+\dx, \y+\dy, 0) -- 
+					(\x+1+\dx, \y+\dy, 0) -- 
+					(\x+1+\dx, \y+1+\dy, 0) -- 
+					(\x+\dx, \y+1+\dy, 0) -- 
+					cycle;
+				}
+				
+				% Cuadrícula visible sobre la sombra (corregida para destacar sobre onyx)
+				\foreach \i in {0,...,5} {
+					\draw[RojoLuz!45!blanco, opacity=0.45, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
+					\draw[RojoLuz!45!blanco, opacity=0.45, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
+				}
+				% Marco perimetral de la matriz recomendada
+				\draw[RojoLuz!70!blanco, opacity=0.75, line width=1.1pt] 
+				(\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
+				
+				% Valores predichos (Recomendaciones generadas por el método)
+				\foreach \x/\y/\v in {
+					1/0/2, 2/0/3, 3/0/4, 4/0/2,
+					0/1/4, 1/1/3, 3/1/1, 4/1/5,
+					0/2/1, 2/2/2, 3/2/4, 4/2/3,
+					0/3/3, 1/3/4, 2/3/5, 3/3/3,
+					0/4/2, 1/4/1, 3/4/4, 4/4/5%
+				} {
+					\node[text=blanco, opacity=0.95, scale=1.05] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
+				}
+				
+				% Valores conocidos originales (en color oscuro sobre celda azul)
+				\foreach \x/\y/\v in {
+					0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
+				} {
+					\node[text=onyx, scale=1.1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\textbf{\v}};
+				}
+			\end{scope}
+			
+			% ==========================================
+			% 4. CONO DE SOMBRA Y RAYOS DE PROYECCIÓN (MATRIZ -> SOMBRA)
+			% ==========================================
+			\begin{scope}[overlay]
+				% Volumen tenue de sombra proyectada entre ambas matrices
+				\fill[onyx, opacity=0.22] (M50) -- (M55) -- (S55) -- (S50) -- cycle;
+				\fill[onyx, opacity=0.16] (M05) -- (M55) -- (S55) -- (S05) -- cycle;
+				
+%				% Aristas de proyección geométrica desde las 4 esquinas de la matriz de datos
+%				\draw[blanco!70!RojoLuz, opacity=0.32, densely dashed, line width=0.7pt] (M00) -- (S00);
+%				\draw[blanco!70!RojoLuz, opacity=0.38, densely dashed, line width=0.7pt] (M50) -- (S50);
+%				\draw[blanco!70!RojoLuz, opacity=0.45, densely dashed, line width=0.8pt] (M55) -- (S55);
+%				\draw[blanco!70!RojoLuz, opacity=0.38, densely dashed, line width=0.7pt] (M05) -- (S05);
+%				
+%				% Trazas de transmisión de las 5 celdas conocidas hacia la sombra
+%				\foreach \k in {1,...,5} {
+%					\draw[colorRcell!85!blanco, opacity=0.40, dotted, line width=0.9pt] (MCel\k) -- (SCel\k);
+%				}
+			\end{scope}
+			
+			% ==========================================
+			% 5. CAPA SUPERIOR: MATRIZ INCOMPLETA (LOS DATOS)
+			% ==========================================
+			
+			% Canto tridimensional (espesor de la placa de datos flotante)
+			\fill[onyx!85!blanco, opacity=0.9] (5,0,5.82) -- (5,5,5.82) -- (5,5,6) -- (5,0,6) -- cycle;
+			\fill[onyx!70!blanco, opacity=0.9] (0,5,5.82) -- (5,5,5.82) -- (5,5,6) -- (0,5,6) -- cycle;
+			\draw[blanco!50, very thin] (5,0,5.82) -- (5,5,5.82) -- (0,5,5.82);
+			
+			% Fondo translúcido de la matriz incompleta (deja pasar la luz roja)
+			\fill[onyx!58!RojoLuz, opacity=0.84] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+			
+%			% Incógnitas sutiles (?) en las celdas sin datos
+%			\foreach \x/\y in {
+%				1/0, 2/0, 3/0, 4/0,
+%				0/1, 1/1, 3/1, 4/1,
+%				0/2, 2/2, 3/2, 4/2,
+%				0/3, 1/3, 2/3, 3/3,
+%				0/4, 1/4, 3/4, 4/4%
+%			} {
+%				\node[text=blanco, opacity=0.22, scale=0.85] at (\x+0.5, \y+0.5, 6) {?};
+%			}
+			
+			% Celdas con datos conocidos (Azules)
+			\foreach \x/\y/\v in {
+				0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
+			} {
+				\fill[colorRcell, opacity=0.95] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
+				\draw[blanco!80, thin] (\x+0.04,\y+0.04,6) -- (\x+0.96,\y+0.04,6) -- (\x+0.96,\y+0.96,6) -- (\x+0.04,\y+0.96,6) -- cycle;
+				\node[text=onyx, scale=1.1] at (\x+0.5, \y+0.5, 6) {\textbf{\v}};
+			}
+			
+			% Grilla de la matriz de datos (doble trazo para nitidez editorial)
+			\foreach \i in {0,...,5} {
+				\draw[onyx, line width=1.2pt] (\i,0,6) -- (\i,5,6);
+				\draw[onyx, line width=1.2pt] (0,\i,6) -- (5,\i,6);
+				\draw[blanco!45, very thin] (\i,0,6) -- (\i,5,6);
+				\draw[blanco!45, very thin] (0,\i,6) -- (5,\i,6);
+			}
+			
+			% Marco perimetral iluminado de la matriz flotante
+			\draw[blanco!85, line width=1.1pt] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
+			
+			% ==========================================
+			% 6. ETIQUETAS MATEMÁTICAS (USUARIOS E ÍTEMS)
+			% ==========================================
+%			\foreach \c in {1,...,5} {
+%				\node[anchor=south east, text=blanco!90, scale=0.95] at (\c-0.5, -0.08, 6) {$i_{\c}$};
+%				\node[anchor=south west, text=blanco!90, scale=0.95] at (-0.08, \c-0.5, 6) {$u_{\c}$};
+%			}
+			
+		\end{tikzpicture}
+	\end{center}  
 	
-	\begin{scope}[scale=1.1, xshift=-1cm, opacity=0.8]
-		
-		% 1. Capas múltiples para el desenfoque del borde (Typo corregido)
-		\foreach \w in {1,...,4} {
-			\draw[onyx!50!RojoLuz, opacity=.1, line width=\w*3pt] 
-			(\dx,\dy,0) -- 
-			(5+\dx,\dy,0) -- 
-			(5+\dx,5+\dy,0) -- % <- Se agregó el signo '+' faltante
-			(\dx,5+\dy,0) -- 
-			cycle;
-		}
-		
-		% ==========================================
-		% 1. CAPA INFERIOR: MATRIZ COMPLETADA (SOMBRA REAL)
-		% ==========================================
-		
-		% Fondo general
-		\fill[onyx] (\dx,\dy,0) -- (5+\dx,\dy,0) -- (5+\dx,5+\dy,0) -- (\dx,5+\dy,0) -- cycle;
-		
-		% Celdas conocidas en azul (Coordenadas relativas exactas corregidas)
-		\foreach \x/\y/\v in {
-			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
-		} {
-			\fill[colorRcell, opacity=0.75] 
-			(\x+\dx, \y+\dy, 0) -- 
-			(\x+1+\dx, \y+\dy, 0) -- 
-			(\x+1+\dx, \y+1+\dy, 0) -- 
-			(\x+\dx, \y+1+\dy, 0) -- 
-			cycle;
-		}
-		
-		% Cuadrícula en gris (Dibujada después del fondo para no ser tapada)
-		\foreach \i in {0,...,5} {
-			\draw[onyx, thick] (\i+\dx,\dy,0) -- (\i+\dx,5+\dy,0);
-			\draw[onyx, thick] (\dx,\i+\dy,0) -- (5+\dx,\i+\dy,0);
-		}
-		
-		% Valores predichos
-		\foreach \x/\y/\v in {
-			0/0/5, 1/0/2, 2/0/3, 3/0/4, 4/0/2,
-			0/1/4, 1/1/3, 2/1/4, 3/1/1, 4/1/5,
-			0/2/1, 1/2/5, 2/2/2, 3/2/4, 4/2/3,
-			0/3/3, 1/3/4, 2/3/5, 3/3/3, 4/3/1,
-			0/4/2, 1/4/1, 2/4/3, 3/4/4, 4/4/5%
-		} {
-			\node[text=blanco, opacity=1] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
-		}
-		
-	\end{scope}
-	
-	%valores originales en matriz completa
-	\begin{scope}[scale=1.1, xshift=-1cm]
-		\foreach \x/\y/\v in {
-			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
-		} {
-			\node[text=onyx, font=\fuentedeportada] at (\x+0.5+\dx, \y+0.5+\dy, 0) {\v};
-		}
-	\end{scope}
-		% ==========================================
-		% 3. CAPA SUPERIOR: MATRIZ INCOMPLETA
-		% ==========================================
-		
-		%color fondo
-		\fill[onyx!50!RojoLuz, opacity=0.8] (0,0,6) -- (5,0,6) -- (5,5,6) -- (0,5,6) -- cycle;
-		
-		
-		\foreach \x/\y/\v in {
-			0/0/5, 2/1/4, 1/2/5, 4/3/1, 2/4/3
-		} {
-			\fill[colorRcell, opacity=0.9] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
-			\draw[colorRcell, thick] (\x,\y,6) -- (\x+1,\y,6) -- (\x+1,\y+1,6) -- (\x,\y+1,6) -- cycle;
-			\node[text=onyx, font=\fuentedeportada] at (\x+0.5, \y+0.5, 6) {\v};
-		}
-		
-		%grilla
-		\foreach \i in {0,...,5} {
-			\draw[onyx, thick] (\i,0,6) -- (\i,5,6);
-			\draw[onyx, thick] (0,\i,6) -- (5,\i,6);
-		}
-		
-		
-		% ==========================================
-		% 4. ETIQUETAS
-		% ==========================================
-%		\foreach \c in {1,...,5} {
-%			\node[anchor=south east, text=onyx,scale=1.25] at (\c-0.5, 0, 6) {$i_{\c}$};
-%			\node[anchor=south west, text=onyx,scale=1.25] at (0, \c-0.5, 6) {$u_{\c}$};
-%		}
-%	\begin{scope}
-%	\node[font=\fuentedeportada\fontsize{50}{55}\selectfont, text=blanco, align=center] at (-1.5,0,14){Sistemas de \\ Recomendación};
-%	\end{scope}
-	
-	% Autores en blanco
-%	\begin{scope}
-%		\node[font=\fuentedeportada\fontsize{20}{25}\selectfont, text=blanco, align=center] at (1.5,3.5,-5){Arias, Blanc, Comelli};
-%	\end{scope}
-	\end{tikzpicture}
-		\end{center}  
 	\vfill
+	
+	% ==========================================
+	% BLOQUE DE AUTORES
+	% ==========================================
 	\begin{tikzpicture}
-		\node[font=\fuentedeportada\fontsize{28}{25}\selectfont, text=blanco, align=center] at (0,0){\hfill Arias, Blanc, Comelli \hfill};
+		\draw[blanco!35, thin] (-4.5, 0.75) -- (4.5, 0.75);
+		\node[font=\fuentedeportada\fontsize{26}{28}\selectfont, text=blanco, align=center] at (0,0) {Arias $\cdot$ Blanc $\cdot$ Comelli};
 	\end{tikzpicture}
-	\vspace{1cm}
+	\vspace{0.8cm}
 \end{titlepage}
