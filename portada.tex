@@ -62,7 +62,7 @@
 			}
 			
 			% ==========================================
-			% 1. LÁMPARA (LA MATEMÁTICA)
+			% 1. LÁMPARA
 			% ==========================================
 			\coordinate (PosicionLinterna) at (4, -4.5, 9.25); 
 			
@@ -100,14 +100,14 @@
 					
 					% Boca de luz y lente de Fresnel (Geometría óptica)
 					\filldraw[onyx!95, draw=blanco, line width=1.1pt] (0, 0) ellipse (0.42 and 1.22);
-					\fill[RojoLuz!92!onyx] (0, 0) ellipse (0.30 and 1.05);
-					\fill[RojoLuz!70!AmbarLuz, opacity=0.85] (0, 0) ellipse (0.18 and 0.70);
-					\fill[blanco, opacity=0.75] (0, 0) ellipse (0.07 and 0.32);
+					\fill[RojoLuz!88!onyx] (0, 0) ellipse (0.30 and 1.05);
+					\fill[RojoLuz!88!onyx, opacity=0.85] (0, 0) ellipse (0.18 and 0.70);
+					\fill[RojoLuz!88!onyx] (0, 0) ellipse (0.07 and 0.32);
 					
 					% Retícula óptica sutil en la lente
-					\draw[blanco, opacity=0.35, very thin] (0, 0) ellipse (0.24 and 0.88);
-					\draw[blanco, opacity=0.35, very thin] (0, -1.05) -- (0, 1.05);
-					\draw[blanco, opacity=0.35, very thin] (-0.30, 0) -- (0.30, 0);
+%					\draw[blanco, opacity=0.35, very thin] (0, 0) ellipse (0.24 and 0.88);
+%					\draw[blanco, opacity=0.35, very thin] (0, -1.05) -- (0, 1.05);
+%					\draw[blanco, opacity=0.35, very thin] (-0.30, 0) -- (0.30, 0);
 					
 					% Puntos de anclaje para el haz de luz
 					\coordinate (LuzSup) at (0, 1.05);  
@@ -142,13 +142,13 @@
 				-- (LuzInf) -- 
 				cycle;
 				
-				% 2.3 Núcleo cálido de alta intensidad en el centro del haz
-				\fill[RojoLuz!80!AmbarLuz, opacity=0.16] 
-				(LuzCentro) -- 
-				(-4.5, 2.5, 0)
-				.. controls (-4, 8.5, 0) and (3, 9, 0) .. 
-				(1.5, 3.5, 0)  
-				-- cycle;
+%				% 2.3 Núcleo cálido de alta intensidad en el centro del haz
+%				\fill[RojoLuz!80!AmbarLuz, opacity=0.16] 
+%				(LuzCentro) -- 
+%				(-4.5, 2.5, 0)
+%				.. controls (-4, 8.5, 0) and (3, 9, 0) .. 
+%				(1.5, 3.5, 0)  
+%				-- cycle;
 				
 				% 2.4 Haces direccionales (rayos del método proyectivo)
 %				\foreach \rx/\ry in {-5.5/1.5, -3.5/4.0, -1.0/6.0, 1.2/5.0, 2.2/3.2} {
