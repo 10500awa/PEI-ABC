@@ -223,8 +223,8 @@ $$
 		\node[train] at (3.2, -2.9) {$R$};
 		\node[train] at (4.8, -2.9) {$R$};
 		\node[fold, draw=none, fill=none] at (5.6, -2.9) {$\cdots$};
-		\node[val]   at (6.4, -2.9) {$V^{(K)}$};
-		\draw[arrow] (7.4, -2.9) -- (8.4, -2.9) node[midway, above, font=\scriptsize] {Entrena} node[right, font=\small] {$f^{(K)} \longrightarrow R\big(f^{(K)}, V^{(K)}\big)$};
+		\node[val]   at (6.4, -2.9) {$V^{(k)}$};
+		\draw[arrow] (7.4, -2.9) -- (8.4, -2.9) node[midway, above, font=\scriptsize] {Entrena} node[right, font=\small] {$f^{(k)} \longrightarrow R\big(f^{(k)}, V^{(k)}\big)$};
 		
 		% Llave derecha para el promedio final
 		\draw[decorate, decoration={brace, amplitude=6pt}, thick, black!70] (12.3, 0.35) -- (12.3, -3.25);
@@ -383,12 +383,12 @@ Sin embargo, este método puede ser muy lento en problemas difíciles. Los méto
 		
 		\draw[vec, red!75!black] (xk) -- (grad) node[right, font=\small\bfseries] {$\nabla f_k$};
 		\draw[vec, blue!75!black] (xk) -- (mgrad) node[left, font=\small\bfseries] {$-\nabla f_k$};
-%		\draw[vec, teal!70!black] (xk) -- (pk1) node[above left, font=\small] {$p_k$};
-%		\draw[vec, teal!70!black] (xk) -- (pk2) node[below left, font=\small] {$p_k'$};
+		\draw[vec, teal!70!black] (xk) -- (pk1) node[above left, font=\small] {$p_k$};
+		\draw[vec, teal!70!black] (xk) -- (pk2) node[below left, font=\small] {$p_k'$};
 		
 		% Ángulos menores a pi/2
 %		\pic[draw=teal!70!black, <->, "$< \frac{\pi}{2}$", angle eccentricity=1.45, angle radius=0.75cm, font=\scriptsize] {angle = pk1--xk--mgrad};
-		
+%		
 		% Punto x_k
 		\filldraw[black] (xk) circle (2pt) node[below right, font=\small\bfseries] {$x_k$};
 		
