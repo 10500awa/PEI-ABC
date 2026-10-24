@@ -180,7 +180,7 @@ def sgd_aggarwal_reg(R, k=2, gamma=0.01, lambda_=0.1, max_iter=1000, tol=1e-4,
 # ============================================================================
 
 def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
-                gamma=0.01, max_iter=500, tol=1e-4, seed=1, verbose=True):
+                gamma_range=(0.01,), max_iter=500, tol=1e-4, seed=1, verbose=True):
     """
     K-fold cross-validation for regularized matrix factorization.
 
@@ -193,11 +193,8 @@ def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
     mean_train_rmse, mean_epochs, converged_folds, n_folds, time_sec,
     fold_rmse (list of per-fold test RMSEs).
     """
-    if factors_range is None:
-        factors_range = [2, 5, 8, 10]
-    if lambda_range is None:
-        lambda_range = [0.01, 0.05, 0.1, 0.2, 0.5]
     lambda_range = np.atleast_1d(lambda_range).tolist()
+    gamma_range = np.atleast_1d(gamma_range).tolist()
 
     if njit is not None:
         _warmup()
@@ -210,7 +207,7 @@ def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
     fold_pattern = np.resize(np.arange(1, k_folds + 1), n_obs)
     fold_assignment = rng.permutation(fold_pattern)
 
-    grid = list(itertools.product(factors_range, lambda_range))
+    grid = list(itertools.product(factors_range, lambda_range, gamma_range))
     n_combos = len(grid)
     results = []
     best_so_far = np.inf
@@ -222,16 +219,17 @@ def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
               f"{n_obs} observed ratings ({100 * n_obs / R.size:.2f}% dense)")
         print(f"Factors : {', '.join(str(f) for f in factors_range)}")
         print(f"Lambdas : {', '.join(str(l) for l in lambda_range)}")
-        print(f"gamma={gamma}, max_iter={max_iter}, tol={tol} | "
+        print(f"Gammas  : {', '.join(str(g) for g in gamma_range)}")
+        print(f"max_iter={max_iter}, tol={tol} | "
               f"{n_combos} combinations x {k_folds} folds = {n_combos * k_folds} fits")
         print(f"numba: {'ON' if njit is not None else 'OFF (slow! pip install numba)'}")
         print("=" * 78 + "\n")
 
-    for combo_idx, (k, lam) in enumerate(grid, start=1):
+    for combo_idx, (k, lam, gam) in enumerate(grid, start=1):
         t_combo = time.perf_counter()
 
         if verbose:
-            print(f"=== [{combo_idx}/{n_combos}] k = {k} factors, lambda = {lam} ===")
+            print(f"=== [{combo_idx}/{n_combos}] k = {k}, lambda = {lam}, gamma = {gam} ===")
 
         fold_rmse = np.zeros(k_folds)
         fold_train = np.zeros(k_folds)
@@ -249,9 +247,9 @@ def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
             R_train[test_rows, test_cols] = np.nan
 
             model = sgd_aggarwal_reg(
-                R_train, k=k, gamma=gamma, lambda_=lam,
-                max_iter=max_iter, tol=tol, seed=seed,
-                verbose=False, compute_rhat=False,
+            R_train, k=k, gamma=gam, lambda_=lam,
+            max_iter=max_iter, tol=tol, seed=seed,
+            verbose=False, compute_rhat=False,
             )
 
             # Predict only the held-out entries
@@ -279,6 +277,7 @@ def kfold_cv_mf(R, k_folds=10, factors_range=None, lambda_range=None,
         results.append({
             "k_factors": k,
             "lambda_": lam,
+            "gamma": gam,
             "mean_rmse": mean_rmse,
             "sd_rmse": sd_rmse,
             "mean_train_rmse": fold_train.mean(),
@@ -323,7 +322,7 @@ def print_cv_summary(cv_results, total_time=None):
     df["time"] = df["time_sec"].map(_fmt_time)
     df["mean_epochs"] = df["mean_epochs"].round(0).astype(int)
 
-    cols = ["k_factors", "lambda_", "mean_rmse", "sd_rmse", "mean_train_rmse",
+    cols = ["k_factors", "lambda_", "gamma", "mean_rmse", "sd_rmse", "mean_train_rmse",
             "gap", "mean_epochs", "converged", "time"]
     fmt = lambda x: f"{x:.4f}"
 
@@ -333,16 +332,17 @@ def print_cv_summary(cv_results, total_time=None):
     print(df.sort_values("mean_rmse")[cols].to_string(index=False, float_format=fmt))
 
     print("\n" + "=" * 78)
-    print("BEST LAMBDA FOR EACH k")
+    print("BEST (LAMBDA, GAMMA) FOR EACH k")
     print("=" * 78)
     best_per_k = df.loc[df.groupby("k_factors")["mean_rmse"].idxmin()]
-    print(best_per_k[["k_factors", "lambda_", "mean_rmse", "sd_rmse", "gap"]]
+
+    print(best_per_k[["k_factors", "lambda_", "gamma", "mean_rmse", "sd_rmse", "gap"]]
           .to_string(index=False, float_format=fmt))
 
     best = df.loc[df["mean_rmse"].idxmin()]
-    print(f"\nBEST OVERALL: k = {int(best['k_factors'])}, lambda = {best['lambda_']} "
-          f"-> test RMSE {best['mean_rmse']:.4f} (SD {best['sd_rmse']:.4f})")
-
+    print(f"\nBEST OVERALL: k = {int(best['k_factors'])}, lambda = {best['lambda_']}, "
+          f"gamma = {best['gamma']} -> test RMSE {best['mean_rmse']:.4f} "
+          f"(SD {best['sd_rmse']:.4f})")
     n_bad = int((cv_results["converged_folds"] < cv_results["n_folds"]).sum())
     if n_bad:
         print(f"WARNING: {n_bad} combination(s) hit max_iter in at least one fold "
@@ -371,23 +371,24 @@ if __name__ == "__main__":
 
     # Grid to search. Larger k mostly adds cost; regularization is what
     # keeps big models from overfitting, so keep the lambda grid.
-    factors_range = [2, 5, 8, 10, 20, 30, 50]
-    lambda_range = [0.01]
+    factors_range = [30]
+    lambda_range = [0.5]
+    gamma_range =  [0.005, 0.01, 0.02, 0.05]
 
     cv_results = kfold_cv_mf(
         R,
         k_folds=10,
         factors_range=factors_range,
         lambda_range=lambda_range,
-        gamma=0.01,
+        gamma_range=gamma_range,   
         max_iter=1000,
     )
 
     # Refit on ALL observed ratings with the best combination
     best = cv_results.loc[cv_results["mean_rmse"].idxmin()]
-    print("\nRefitting on all data with the best combination...")
     final_model = sgd_aggarwal_reg(
         R, k=int(best["k_factors"]), lambda_=float(best["lambda_"]),
-        gamma=0.01, max_iter=1000, verbose=True,
+        gamma=float(best["gamma"]),   
+        max_iter=1000, verbose=True,
     )
     R_hat = final_model["R_hat"]

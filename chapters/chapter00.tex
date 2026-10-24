@@ -37,47 +37,125 @@ Este problema constituye una instancia de lo que se conoce como \textit{completa
 
 Para comenzar este recorrido por los sistemas de recomendación, estudiaremos primero un método sencillo que, aunque puede resultar computacionalmente costoso, permite obtener resultados satisfactorios y sirve como punto de partida para métodos más sofisticados.
 
- \chapter{Conceptos latentes}
- 
- En muchos problemas de aprendizaje automático, los datos pueden presentar características subyacentes que no son directamente observables, pero que permiten explicar las relaciones entre las distintas observaciones. La identificación de estas características puede resultar de gran utilidad, ya que permite modelar tanto las preferencias de los usuarios como las propiedades de los elementos con los que estos interactúan. A estas características no observadas las denominaremos \textit{conceptos latentes}.
- 
- Consideremos una matriz de datos $R \in {R}^{m\times n}$, donde la entrada $r_{ij}$ representa la valoración del usuario $i$ sobre el \textit{ítem} $j$. Una forma de identificar estructuras latentes en los datos consiste en aproximar $R$ mediante una factorización matricial de rango bajo,
- $$ R\approx UV^T,$$
-1 donde $U\in \mathbb{R}^{m\times k}$ y $V\in  \mathbb {R}^{n\times k}$, con $k\ll\min(m,n)$.
- 
- Denotemos por $\vec{u}_i$ a la fila $i$ de $U$ y por $\vec{v}_j$ a la fila $j$ de $V$. Entonces, la entrada $(i,j)$ de $UV^T$ está dada por
- $$(UV^T)_{ij} = \vec{u}_i\cdot\vec{v}_j,$$
- 
- por lo que podemos interpretar la predicción de la valoración del usuario $i$ sobre el ítem $j$ como
- $$ \hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
- Cada uno de los vectores $\vec{u}_i,\vec{v}_j\in  \mathbb{R}^{k}$ constituye una representación de dimensión reducida de un usuario y de un ítem, respectivamente. En particular, podemos interpretar cada una de sus coordenadas como una medida de la relación de dicho usuario o ítem con una determinada dimensión latente. Estas dimensiones no tienen necesariamente una interpretación semántica explícita; su significado emerge de la estructura de los datos y del proceso de factorización.
- 
- Llamaremos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. De esta manera, el producto interno entre ambos vectores determina la valoración que el modelo asigna al usuario $i$ para el ítem $j$.
+\chapter{Conceptos latentes}
 
- El parámetro $k$ determina la dimensión del espacio latente. Si $k$ es menor que el rango de $R$, no buscamos obtener una factorización exacta, sino una aproximación de rango reducido,
- $$ R\approx UV^T. $$
- La calidad de esta aproximación puede medirse mediante la norma de Frobenius,
- $$ \|R-UV^T\|_F. $$
- En consecuencia, la búsqueda de una aproximación de rango bajo puede plantearse como un problema de optimización, en el que buscamos determinar $U$ y $V$ de modo que minimicen el error de reconstrucción. En el caso de disponer de la matriz completa, esto conduce al problema
- $$ \min_{U,V}\frac{1}{2}\|R-UV^T\|_F^2. $$
- Sin embargo, en nuestro problema no disponemos de todas las entradas de la matriz $R$. El objetivo es precisamente utilizar las valoraciones conocidas para predecir aquellas que faltan. Por este motivo, no resulta apropiado calcular directamente la norma de Frobenius sobre toda la matriz, ya que esta requiere conocer todas sus entradas.
- 
- Para abordar esta situación, consideremos el conjunto de índices correspondientes a las entradas observadas,
- $$ S=\{(i,j): r_{ij}\text{ es conocido}\}. $$
- A partir de estas entradas, buscamos determinar una factorización de rango bajo $UV^T$ que permita reconstruir adecuadamente los valores observados y, posteriormente, utilizarla para predecir los valores faltantes.
- 
- En particular, para una entrada $(i,j)\notin S$, la valoración predicha por el modelo está dada por
- $$
- \hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
- 
- Para las entradas observadas, definimos el error de reconstrucción como
- $$ e_{ij} = r_{ij} -\hat r_{ij} = r_{ij}-\vec{u}_i\cdot\vec{v}_j.$$
- Por lo tanto, podemos formular el problema de encontrar los factores latentes como la minimización del error cuadrático sobre las entradas observadas:
- $$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} e_{ij}^2. $$
- O, equivalentemente,
- $$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} \left( r_{ij}-\vec{u}_i\cdot\vec{v}_j \right)^2. $$
- Esta formulación permite determinar los factores latentes utilizando únicamente la información disponible en las entradas observadas, para posteriormente emplearlos en la predicción de las valoraciones faltantes.
- 
+En muchos problemas de aprendizaje automático, los datos pueden presentar características subyacentes que no son directamente observables, pero que permiten explicar las relaciones entre las distintas observaciones. La identificación de estas características puede resultar de gran utilidad, ya que permite modelar tanto las preferencias de los usuarios como las propiedades de los elementos con los que estos interactúan. A estas características no observadas las denominaremos \textit{conceptos latentes}.
+
+Consideremos una matriz de datos $R \in {R}^{m\times n}$, donde la entrada $r_{ij}$ representa la valoración del usuario $i$ sobre el \textit{ítem} $j$. Una forma de identificar estructuras latentes en los datos consiste en aproximar $R$ mediante una factorización matricial de rango bajo,
+$$ R\approx UV^T,$$
+1 donde $U\in \mathbb{R}^{m\times k}$ y $V\in  \mathbb {R}^{n\times k}$, con $k\ll\min(m,n)$.
+
+Denotemos por $\vec{u}_i$ a la fila $i$ de $U$ y por $\vec{v}_j$ a la fila $j$ de $V$. Entonces, la entrada $(i,j)$ de $UV^T$ está dada por
+$$(UV^T)_{ij} = \vec{u}_i\cdot\vec{v}_j,$$
+
+por lo que podemos interpretar la predicción de la valoración del usuario $i$ sobre el ítem $j$ como
+$$ \hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
+Cada uno de los vectores $\vec{u}_i,\vec{v}_j\in  \mathbb{R}^{k}$ constituye una representación de dimensión reducida de un usuario y de un ítem, respectivamente. En particular, podemos interpretar cada una de sus coordenadas como una medida de la relación de dicho usuario o ítem con una determinada dimensión latente. Estas dimensiones no tienen necesariamente una interpretación semántica explícita; su significado emerge de la estructura de los datos y del proceso de factorización.
+
+Llamaremos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. De esta manera, el producto interno entre ambos vectores determina la valoración que el modelo asigna al usuario $i$ para el ítem $j$.
+
+El parámetro $k$ determina la dimensión del espacio latente. Si $k$ es menor que el rango de $R$, no buscamos obtener una factorización exacta, sino una aproximación de rango reducido,
+$$ R\approx UV^T. $$
+La calidad de esta aproximación puede medirse mediante la norma de Frobenius,
+$$ \|R-UV^T\|_F. $$
+En consecuencia, la búsqueda de una aproximación de rango bajo puede plantearse como un problema de optimización, en el que buscamos determinar $U$ y $V$ de modo que minimicen el error de reconstrucción. En el caso de disponer de la matriz completa, esto conduce al problema
+$$ \min_{U,V}\frac{1}{2}\|R-UV^T\|_F^2. $$
+Sin embargo, en nuestro problema no disponemos de todas las entradas de la matriz $R$. El objetivo es precisamente utilizar las valoraciones conocidas para predecir aquellas que faltan. Por este motivo, no resulta apropiado calcular directamente la norma de Frobenius sobre toda la matriz, ya que esta requiere conocer todas sus entradas.
+
+Para abordar esta situación, consideremos el conjunto de índices correspondientes a las entradas observadas,
+$$ S=\{(i,j): r_{ij}\text{ es conocido}\}. $$
+A partir de estas entradas, buscamos determinar una factorización de rango bajo $UV^T$ que permita reconstruir adecuadamente los valores observados y, posteriormente, utilizarla para predecir los valores faltantes.
+
+En particular, para una entrada $(i,j)\notin S$, la valoración predicha por el modelo está dada por
+$$
+\hat r_{ij} = \vec{u}_i\cdot\vec{v}_j. $$
+
+Para las entradas observadas, definimos el error de reconstrucción como
+$$ e_{ij} = r_{ij} -\hat r_{ij} = r_{ij}-\vec{u}_i\cdot\vec{v}_j.$$
+Por lo tanto, podemos formular el problema de encontrar los factores latentes como la minimización del error cuadrático sobre las entradas observadas:
+$$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} e_{ij}^2. $$
+O, equivalentemente,
+$$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} \left( r_{ij}-\vec{u}_i\cdot\vec{v}_j \right)^2. $$
+Esta formulación permite determinar los factores latentes utilizando únicamente la información disponible en las entradas observadas, para posteriormente emplearlos en la predicción de las valoraciones faltantes.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=0.95, every node/.style={transform shape},
+		mat/.style={draw=black!80, thick, fill=gray!5},
+		latent/.style={draw=blue!70!black, thick, fill=blue!15},
+		itemlatent/.style={draw=teal!70!black, thick, fill=teal!15}
+		]
+		
+		% Matriz R (m x n) con entradas faltantes
+		\draw[mat] (0,0) rectangle (3.2, 4.0);
+		\node[font=\bfseries] at (1.6, 5) {$R \in \mathbb{R}^{m \times n}$};
+		\node[rotate=90, font=\small] at (-0.4, 2.0) {$m$ usuarios};
+		\node[font=\small] at (1.6, -0.4) {$n$ ítems};
+		\draw[orange,ultra thick, line join=round, line cap=round]
+		(-0.25,4) --
+		(-0.25,4.65) --
+		(3.5,4.65) --
+		(3.5,4) ;
+		
+		\draw[blue,ultra thick, line join=round, line cap=round]
+		(4.5,4) --
+		(4.5,4.65) --
+		(6.25,4.65) --
+		(6.25,4) ;
+		
+		\draw[teal,ultra thick, line join=round, line cap=round]
+		(6.75,2.55) --
+		(6.75,3.2) --
+		(10.35,3.2) --
+		(10.35,2.55) ;
+		
+		
+		% Destacar la entrada r_ij
+		\filldraw[fill=orange!25, draw=orange!80!black, thick] (1.6, 1.8) rectangle (2.4, 2.3);
+		\node[font=\footnotesize\bfseries, text=orange!60!black] at (2.0, 2.05) {$\hat{r}_{ij}$};
+		\draw[dashed, orange!80!black] (0, 2.05) -- (1.6, 2.05);
+		\node[left, font=\footnotesize] at (0, 2.05) {$i$};
+		\draw[dashed, orange!80!black] (2.0, 4.0) -- (2.0, 2.3);
+		\node[above, font=\footnotesize] at (2.0, 4.0) {$j$};
+		% Grilla interna simulando entradas conocidas y desconocidas ()
+		\foreach \x/\y/\val in {0.4/3.5/4, 1.2/3.5/, 2.0/3.5/5, 2.8/3.5/,
+			0.4/2.7/, 1.2/2.7/2, 2.0/2.7/, 2.8/2.7/3,
+			0.4/1.3/5, 1.2/1.3/, 2.0/1.3/1, 2.8/1.3/4,
+			0.4/0.5/, 1.2/0.5/4, 2.0/0.5/, 2.8/0.5/} {
+			\node[font=, text=black] at (\x, \y) {\val};
+		}
+		
+		% Signo de aproximación
+		\node[font=\huge] at (4.0, 2.0) {$\approx$};
+		
+		% Matriz U (m x k)
+		\draw[mat] (4.8, 0) rectangle (6.0, 4.0);
+		\node[font=\bfseries] at (5.4, 5) {$U \in \mathbb{R}^{m \times k}$};
+		\node[font=\small] at (5.4, -0.4) {$k$ factores};
+		
+		% Fila u_i destacada
+		\filldraw[latent] (4.8, 1.8) rectangle (6.0, 2.3);
+		\node[font=\footnotesize\bfseries, text=blue!60!black] at (5.4, 2.05) {$\vec{u}_i$};
+		
+		% Producto
+		\node[font=\Large] at (6.5, 2.05) {$\cdot$};
+		
+		% Matriz V^T (k x n)
+		\draw[mat] (7.0, 1.45) rectangle (10.2, 2.65);
+		\node[font=\bfseries] at (8.6, 3.6) {$V^T \in \mathbb{R}^{k \times n}$};
+		\node[right, font=\small] at (10.3, 2.05) {$k$ factores};
+		\node[font=\small] at (8.6, 1.05) {$n$ ítems};
+		
+		% Columna v_j destacada
+		\filldraw[itemlatent] (8.6, 1.45) rectangle (9.1, 2.65);
+		\node[font=\footnotesize\bfseries, text=teal!60!black] at (8.85, 2.05) {$\vec{v}_j$};
+		
+	\end{tikzpicture}
+	\caption{Aproximación de rango reducido $R \approx UV^T$. La valoración predicha $\hat{r}_{ij}$ se obtiene mediante el producto interno de los factores latentes del usuario y del ítem: $\hat{r}_{ij} = \vec{u}_i \cdot \vec{v}_j$.}
+	\label{fig:matrix_factorization}
+\end{figure}
+
 \section{Gradiente Descendiente}
 
 El conjunto de datos de validación es un subconjunto de los datos disponibles para el entrenamiento del modelo. Un problema práctico con este enfoque es que la cantidad de datos disponibles es limitada e, idealmente, queremos utilizar la mayor cantidad posible de ellos para entrenar el modelo. Esto requiere que nuestro conjunto de validación $V$ sea relativamente pequeño, lo que puede llevar a una estimación ruidosa (de alta varianza) de la capacidad de predicción del modelo.
@@ -98,10 +176,70 @@ $$
 
 Iteramos sobre las distintas formas de elegir los conjuntos de entrenamiento y validación, y calculamos la media de los errores obtenidos.
 
-La validación cruzada aproxima el error de generalización esperado mediante
+La validación cruzada aproxima el error de generalización esperado mediante el promedio de los errores obtenidos en las $K$ iteraciones:
+$$
+\hat{R}_{CV} = \frac{1}{K} \sum_{k=1}^{K} R\big(f^{(k)}, V^{(k)}\big).
+$$
 
-
-$$\textit{[Insertar gráfico.]}$$
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=0.95, every node/.style={transform shape},
+		fold/.style={minimum width=1.6cm, minimum height=0.75cm, draw=black!70, thick, font=\small},
+		train/.style={fold, fill=blue!12, text=blue!50!black},
+		val/.style={fold, fill=orange!30, text=orange!50!black, font=\small\bfseries},
+		arrow/.style={-Stealth, thick, draw=black!70}
+		]
+		
+		% Título del conjunto de datos D
+		\node[font=\bfseries] at (4.0, 1.3) {Conjunto de datos disponible $D = R \cup V$};
+		\draw[decorate, decoration={brace, amplitude=6pt}, thick, black!70] (0.8, 0.65) -- (7.2, 0.65);
+		
+		% Iteración k = 1
+%		\node[anchor=east, font=\small\bfseries] at (0.4, 0) {Iteración $k=1$:};
+		\node[val]   at (1.6, 0) {$V^{(1)}$};
+		\node[train] at (3.2, 0) {$R$};
+		\node[train] at (4.8, 0) {$R$};
+		\node[ fold, draw=none, fill=none] at (5.6, 0) {$\cdots$};
+		\node[train] at (6.4, 0) {$R$};
+		\draw[arrow] (7.4, 0) -- (8.4, 0) node[midway, above, font=\scriptsize] {Entrena} node[right, font=\small] {$f^{(1)} \longrightarrow R\big(f^{(1)}, V^{(1)}\big)$};
+		
+		% Iteración k = 2
+%		\node[anchor=east, font=\small\bfseries] at (0.4, -1.1) {Iteración $k=2$:};
+		\node[train] at (1.6, -1.1) {$R$};
+		\node[val]   at (3.2, -1.1) {$V^{(2)}$};
+		\node[train] at (4.8, -1.1) {$R$};
+		\node[fold, draw=none, fill=none] at (5.6, -1.1) {$\cdots$};
+		\node[train] at (6.4, -1.1) {$R$};
+		\draw[arrow] (7.4, -1.1) -- (8.4, -1.1) node[midway, above, font=\scriptsize] {Entrena} node[right, font=\small] {$f^{(2)} \longrightarrow R\big(f^{(2)}, V^{(2)}\big)$};
+		
+		% Puntos suspensivos verticales
+		\node[font=\large] at (4.0, -2.0) {$\vdots$};
+		\node[font=\large] at (9.8, -2.0) {$\vdots$};
+		
+		% Iteración k = K
+%		\node[anchor=east, font=\small\bfseries] at (0.4, -2.9) {Iteración $k=K$:};
+		\node[train] at (1.6, -2.9) {$R$};
+		\node[train] at (3.2, -2.9) {$R$};
+		\node[train] at (4.8, -2.9) {$R$};
+		\node[fold, draw=none, fill=none] at (5.6, -2.9) {$\cdots$};
+		\node[val]   at (6.4, -2.9) {$V^{(K)}$};
+		\draw[arrow] (7.4, -2.9) -- (8.4, -2.9) node[midway, above, font=\scriptsize] {Entrena} node[right, font=\small] {$f^{(K)} \longrightarrow R\big(f^{(K)}, V^{(K)}\big)$};
+		
+		% Llave derecha para el promedio final
+		\draw[decorate, decoration={brace, amplitude=6pt}, thick, black!70] (12.3, 0.35) -- (12.3, -3.25);
+		\draw[arrow] (12.5, -1.45) -- (13.3, -1.45);
+		\node[draw=black!70, thick, fill=gray!10, rounded corners=3pt, inner sep=6pt, anchor=west, font=\small] at (13.3, -1.45) 
+		{$\displaystyle \frac{1}{K}\sum_{k=1}^{K} R\big(f^{(k)}, V^{(k)}\big)$};
+		
+		% Leyenda inferior
+		\node[train, minimum width=0.5cm, minimum height=0.4cm, label=right:{\footnotesize Conjunto de entrenamiento ($R$)}] at (1.5, -4.2) {};
+		\node[val, minimum width=0.5cm, minimum height=0.4cm, label=right:{\footnotesize Conjunto de validación ($V^{(k)}$)}] at (7.0, -4.2) {};
+		
+	\end{tikzpicture}
+	\caption{Esquema de validación cruzada $K$-fold. En cada iteración $k$, se entrena un predictor $f^{(k)}$ sobre las $K-1$ particiones de entrenamiento ($R$) y se evalúa su riesgo empírico sobre la partición de validación restante ($V^{(k)}$).}
+	\label{fig:kfold_cv}
+\end{figure}
 
 
 Una desventaja potencial de la validación $K$-fold es el costo computacional asociado con entrenar el modelo $K$ veces, lo cual puede resultar muy costoso. Además, en la práctica, generalmente no es suficiente fijarse directamente en los parámetros del modelo de manera aislada.
@@ -125,6 +263,10 @@ $$
 es una elección apropiada para buscar direcciones en un método de búsqueda lineal. Intuitivamente, de todas las direcciones posibles, esta es la dirección en la que la función decrece más rápidamente.
 
 Para verificar esta observación, apelamos al teorema de Taylor, que nos dice que, para toda dirección de búsqueda $p$ y un paso $\alpha$ suficientemente pequeño,
+
+$$
+f(x_k + \alpha p) = f(x_k) + \alpha p^T \nabla f_k + \frac{1}{2}\alpha^2 p^T \nabla^2 f(x_k + t p) p, \quad \text{para algún } t \in (0, \alpha).
+$$
 
 $$\textit{[Insertar gráfico.]}$$
 
@@ -155,7 +297,55 @@ Esta expresión alcanza su menor valor cuando $\theta=\pi$, es decir, cuando
 $$
 p=-\frac{\nabla f_k}{\|\nabla f_k\|}.
 $$
-$$\textit{[Insertar gráfico.]}$$
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=1.0, every node/.style={transform shape},
+		vec/.style={-Stealth, very thick},
+		level/.style={thick, draw=gray!70}
+		]
+		
+		% Curvas de nivel elípticas
+		\begin{scope}[rotate=20]
+			\draw[level, fill=blue!3] (0,0) ellipse (4.2cm and 2.5cm);
+			\draw[level, fill=blue!7] (0,0) ellipse (3.1cm and 1.85cm);
+			\draw[level, fill=blue!12] (0,0) ellipse (2.0cm and 1.2cm);
+			\draw[level, fill=blue!18] (0,0) ellipse (0.9cm and 0.55cm);
+			\filldraw[blue!60!black] (0,0) circle (1.5pt) node[below left, font=\scriptsize] {$x^*$};
+			
+			% Punto x_k sobre la tercera curva de nivel (x = 3.1, y = 0 en coordenadas rotadas)
+			\coordinate (xk) at (3.1, 0);
+			
+			% Vectores desde x_k (en el sistema rotado la normal es horizontal)
+			\coordinate (grad) at ($(xk) + (1.8, 0)$);
+			\coordinate (steep) at ($(xk) + (-1.8, 0)$);
+			\coordinate (dirp) at ($(xk) + (-1.2, 1.35)$);
+			
+			% Recta tangente a la curva de nivel en x_k
+			\draw[dashed, gray!80] ($(xk) + (0, -1.6)$) -- ($(xk) + (0, 1.6)$);
+		\end{scope}
+		
+		% Dibujo de los vectores
+		\draw[vec, red!75!black] (xk) -- (grad) node[right, font=\small\bfseries] {$\nabla f_k$};
+		\draw[vec, blue!75!black] (xk) -- (steep) node[below left, font=\small\bfseries] {$-\frac{\nabla f_k}{\|\nabla f_k\|}$};
+		\draw[vec, teal!75!black] (xk) -- (dirp) node[above left, font=\small\bfseries] {$p$};
+		
+		% Ángulo theta entre gradiente y dirección p
+		\pic[draw=black!70, ->, "$\theta$", angle eccentricity=1.35, angle radius=0.65cm, font=\footnotesize] {angle = grad--xk--dirp};
+		
+		% Punto x_k
+		\filldraw[black] (xk) circle (2pt) node[below right, font=\small\bfseries] {$x_k$};
+		
+		% Etiqueta de curvas de nivel
+		\node[black, font=\footnotesize] at (-2.4, -3) {Curvas de nivel de $f(x)$};
+		
+	\end{tikzpicture}
+	\caption{El gradiente $\nabla f_k$ es ortogonal a la curva de nivel en $x_k$ y apunta hacia donde $f$ crece. 
+%		El producto interno $p^T \nabla f_k = \|\nabla f_k\|\cos\theta$ se minimiza cuando $\theta = \pi$, es decir, en la dirección opuesta $-\nabla f_k / \|\nabla f_k\|$.
+}
+	\label{fig:steepest_descent_vec}
+\end{figure}
 
 El método de máximo decrecimiento es un método de búsqueda lineal que se mueve en la dirección
 
@@ -167,7 +357,49 @@ en cada paso. El tamaño del paso puede seleccionarse de varias maneras. Una ven
 
 Sin embargo, este método puede ser muy lento en problemas difíciles. Los métodos de búsqueda lineal pueden buscar en otras direcciones distintas de la dirección de máximo decrecimiento. En general, cualquier dirección de decrecimiento que forme un ángulo menor que $\pi/2$ con respecto a $-\nabla f_k$ garantiza una mejora de la función objetivo para un tamaño de paso suficientemente pequeño.
 
-$$\textit{[Insertar grafico.]}$$
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=1.0, every node/.style={transform shape},
+		vec/.style={-Stealth, very thick}
+		]
+		
+		% Región sombreada de direcciones de descenso (semiplano izquierdo)
+		\fill[green!12] (0, -2.3) rectangle (-2.6, 2.3);
+		\draw[dashed, thick, black] (0, -2.4) -- (0, 2.4) node[above, font=\footnotesize] {Hiperplano tangente ($p^T \nabla f_k = 0$)};
+		
+		% Curva de nivel que pasa por x_k
+		\draw[thick, gray!70] (0.55, -2.3) .. controls (-0.18, -0.8) and (-0.18, 0.8) .. (0.55, 2.3)
+		node[pos=0.12, right, font=\footnotesize, text=gray!70!black] {$f(x) = f(x_k)$};
+		
+		% Punto x_k en el origen
+		\coordinate (xk) at (0,0);
+		
+		% Vectores principales
+		\coordinate (grad) at (2.0, 0);
+		\coordinate (mgrad) at (-2.2, 0);
+		\coordinate (pk1) at (-1.6, 1.3);
+		\coordinate (pk2) at (-1.5, -1.1);
+		
+		\draw[vec, red!75!black] (xk) -- (grad) node[right, font=\small\bfseries] {$\nabla f_k$};
+		\draw[vec, blue!75!black] (xk) -- (mgrad) node[left, font=\small\bfseries] {$-\nabla f_k$};
+%		\draw[vec, teal!70!black] (xk) -- (pk1) node[above left, font=\small] {$p_k$};
+%		\draw[vec, teal!70!black] (xk) -- (pk2) node[below left, font=\small] {$p_k'$};
+		
+		% Ángulos menores a pi/2
+%		\pic[draw=teal!70!black, <->, "$< \frac{\pi}{2}$", angle eccentricity=1.45, angle radius=0.75cm, font=\scriptsize] {angle = pk1--xk--mgrad};
+		
+		% Punto x_k
+		\filldraw[black] (xk) circle (2pt) node[below right, font=\small\bfseries] {$x_k$};
+		
+		% Etiquetas de regiones
+		\node[font=\footnotesize\bfseries, text=green!40!black, align=center] at (-4, 1.4) {Direcciones de descenso\\($p_k^T \nabla f_k < 0$)};
+		\node[font=\footnotesize, text=red!60!black, align=center] at (4, 1.4) {Direcciones de ascenso\\($p_k^T \nabla f_k > 0$)};
+		
+	\end{tikzpicture}
+	\caption{Cualquier dirección de búsqueda $p_k$ que forme un ángulo estrictamente menor a $\pi/2$ con $-\nabla f_k$ cumple $p_k^T \nabla f_k < 0$ y garantiza una disminución de $f$ para un paso $\alpha$ suficientemente pequeño.}
+	\label{fig:descent_directions_halfspace}
+\end{figure}
 
 
 \section{Gradiente Descendiente Estocástico}
@@ -180,8 +412,47 @@ Puede ocurrir, en el caso de matrices dispersas, que nuestra aproximación sea t
 Por ejemplo, si nos encontramos en el contexto de una matriz de calificaciones de usuarios sobre películas, podría resultar poco razonable que el modelo recomiende una película de terror a un usuario cuyas preferencias observadas muestran una clara inclinación por las películas de comedia.
 
 Para mitigar estos efectos, haremos uso de la \textit{regularización de Tikhonov}. Esencialmente, buscamos controlar mediante un factor $\lambda>0$ el tamaño de los parámetros que determinan las predicciones, favoreciendo soluciones más simples y evitando que el modelo se ajuste excesivamente a los datos observados.
-
-$$\textit{[Agregar gráfico comparativo entre la distribución de las predicciones con y sin regularización.]}$$
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=1.0, every node/.style={transform shape},
+		axis/.style={-Stealth, thick, black!80}
+		]
+		
+		% Ejes
+		\draw[axis] (-4.5, 0) -- (4.8, 0) node[right, font=\small] {Valor predicho $\hat{r}_{ij}$};
+		\draw[axis] (-4.2, 0) -- (-4.2, 3.6) node[above, font=\small] {Densidad};
+		
+		% Zona de calificaciones válidas (ej. escala de 1 a 5)
+		\fill[gray!12] (-1.5, 0) rectangle (1.5, 3.3);
+		\draw[dashed, gray!70, thick] (-1.5, 0) -- (-1.5, 3.3) node[above, font=\scriptsize, text=black!70] {$r_{\min}$ (1)};
+		\draw[dashed, gray!70, thick] (1.5, 0) -- (1.5, 3.3) node[above, font=\scriptsize, text=black!70] {$r_{\max}$ (5)};
+		\node[font=\scriptsize, text=gray!60!black] at (0, -0.35) {Rango válido de valoraciones};
+		
+		% Curva SIN regularización (lambda = 0): varianza muy alta, colas pesadas fuera de rango
+		\draw[very thick, red!75!black, dashed, fill=red!10, fill opacity=0.4] 
+		plot[smooth, domain=-4.0:4.0, samples=100] (\x, {0.85 * exp(-0.18*(\x)^2)}) -- (4.0,0) -- (-4.0,0) -- cycle;
+		
+		% Curva CON regularización de Tikhonov (lambda > 0): concentrada en el rango válido
+		\draw[very thick, blue!75!black, fill=blue!15, fill opacity=0.5] 
+		plot[smooth, domain=-4.0:4.0, samples=100] (\x, {2.9 * exp(-1.6*(\x)^2)}) -- (4.0,0) -- (-4.0,0) -- cycle;
+		
+		% Flechas explicativas de los extremos anómalos
+		\draw[-Stealth, red!70!black, thin] (-2.8, 1.1) -- (-2.6, 0.35);
+		\node[font=\scriptsize, text=red!70!black, align=center] at (-2.8, 1.45) {Predicciones extremas\\(sobreajuste en $S$)};
+		
+		% Leyenda
+		\node[draw=black!60, fill=white, rounded corners=3pt, inner sep=5pt, anchor=north east, font=\footnotesize] at (7.65, 2.5) {
+			\begin{tabular}{cl}
+				\tikz{\draw[very thick, blue!75!black, fill=blue!15] (0,0) rectangle (0.4,0.2);} & Con regularización ($\lambda > 0$) \\
+				\tikz{\draw[very thick, red!75!black, dashed, fill=red!10] (0,0) rectangle (0.4,0.2);} & Sin regularización ($\lambda = 0$)
+			\end{tabular}
+		};
+		
+	\end{tikzpicture}
+	\caption{Comparación esquemática de la distribución de las predicciones $\hat{r}_{ij} = \vec{u}_i \cdot \vec{v}_j$ sobre entradas no observadas. Sin regularización ($\lambda = 0$), el modelo sobreajusta las pocas observaciones disponibles haciendo crecer la norma de $\vec{u}_i$ y $\vec{v}_j$, lo que produce predicciones dispersas fuera del rango válido. La regularización de Tikhonov ($\lambda > 0$) acota los factores latentes y concentra las predicciones en valores coherentes.}
+	\label{fig:tikhonov_predictions}
+\end{figure}
 
 Matemáticamente, incorporamos un término de regularización al problema de minimización. En nuestro caso, utilizaremos una penalización cuadrática sobre los factores que intervienen en la factorización de la matriz. De esta manera, el problema queda dado por
 
@@ -201,3 +472,21 @@ El parámetro $\lambda$ controla el compromiso entre ambos objetivos. Para valor
 
 \section{Gradiente Descendiente con Regularización} 
 \section{Gradiente Descendiente Estocástico con Regularización}
+
+En lugar de calcular el gradiente sobre la totalidad de las entradas observadas $S$ en cada iteración, el \textbf{Gradiente Descendiente Estocástico} (SGD) selecciona una entrada conocida $(i,j) \in S$ a la vez y actualiza únicamente los vectores latentes involucrados $\vec{u}_i$ y $\vec{v}_j$.
+
+Considerando la función objetivo regularizada, las derivadas parciales respecto a los factores de la observación $(i,j)$ vienen dadas por
+$$
+\nabla_{\vec{u}_i} J_{ij} = -e_{ij}\vec{v}_j + \lambda \vec{u}_i, 
+\qquad 
+\nabla_{\vec{v}_j} J_{ij} = -e_{ij}\vec{u}_i + \lambda \vec{v}_j,
+$$
+donde $e_{ij} = r_{ij} - \vec{u}_i \cdot \vec{v}_j$. En consecuencia, dado un paso o tasa de aprendizaje $\alpha > 0$, las reglas de actualización en cada paso son:
+$$
+\begin{aligned}
+	\vec{u}_i &\leftarrow \vec{u}_i + \alpha \left( e_{ij}\vec{v}_j - \lambda \vec{u}_i \right), \\
+	\vec{v}_j &\leftarrow \vec{v}_j + \alpha \left( e_{ij}\vec{u}_i - \lambda \vec{v}_j \right).
+\end{aligned}
+$$
+
+\section{Hyperparámetros y como hallar los optimos}
