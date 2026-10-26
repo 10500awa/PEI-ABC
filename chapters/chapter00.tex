@@ -1,5 +1,3 @@
-\chapter{}
-
 \section{Introducción}
 \noindent
 No es novedad  que hoy los sistemas de recomendación son parte de nuestra vida cotidiana. En las redes sociales, en la publicidad segmentada e incluso en las plataformas de Streaming. 
@@ -10,22 +8,15 @@ Los sistemas de recomendación son muy utilizados y francamente exitosos en el m
 
 Naturalmente, uno buscaría mantener la competitividad colocando nuevos productos o ampliando la cartera de países importadores, pero esto puede ser muy costoso y además, en algunos casos, no está tan claro que países son potenciales clientes. 
 
+Es en este punto donde los \textbf{sistemas de recomendación} capturando la información necesaria, pueden ayudar a predecir países interesados en nuestros productos. En particular, se discutirán y se expondrán modelos de \textbf{factores latentes} 
 
+\section{Preliminares y motivación}
 
-Es en este punto donde los \textbf{sistemas de recomendación} capturando la información necesaria, pueden ayudar a predecir países interesados en nuestros productos. En particular, se discutirán y se expondrán modelos de \textbf{factores latentes}.
+Imaginemos que se nos arroja una matriz de datos $R\in\mathbb{R}^{n\times m}$. La índole de las entradas pueden ser muy diversas; en nuestro caso, las filas corresponderán a $n$ consumidores, y las columnas, $m$ productos, y la entrada $r_{ij}$ es la valoración del consumidor $i$ sobre el producto $j$. Por ejemplo, podemos considerar una matriz cuyas filas representan usuarios de una plataforma de \textit{streaming} y cuyas columnas representan películas. En este caso, la entrada $r_{ij}$ puede representar la valoración del usuario $i$ a la película $j$. No siempre será conveniente, o incluso posible, calcular una factorización exacta de la misma. Resulta natural, entonces, buscar una aproximación de rango reducido. En el problema clásico, donde conocemos todas las entradas de la matriz $R$, el proceso es bien conocido. Veamos un ejemplo para dejarlo en claro.
 
-\section{Motivación}
-
-Imaginemos que se nos arroja una matriz de datos $R\in\mathbb{R}^{n\times m}$. La índole de las entradas pueden ser muy diversas; en nuestro caso, las filas corresponderán a $n$ consumidor, y las columnas, $m$ productos, y la entrada $r_{ij}$ es la valoración del consumidor $i$ en el producto $j$. Por ejemplo, podemos considerar una matriz cuyas filas representan usuarios de una plataforma de \textit{streaming} y cuyas columnas representan películas. En este caso, la entrada $r_{ij}$ puede representar la valoración del usuario $i$ a la película $j$. No siempre será conveniente, o incluso posible, calcular una factorización exacta de la misma. Resulta natural, entonces, buscar una aproximación de rango reducido. 
-
-
-Dada una matriz $R\in\mathbb{R}^{n\times m}$, no siempre será conveniente, o incluso posible, calcular una factorización exacta de la misma. Resulta natural, entonces, buscar una aproximación de rango reducido.
-
-En el problema clásico, donde conocemos todas las entradas de la matriz $R$, el proceso es bien conocido. Veamos un ejemplo para dejarlo enclaro.
-
-Buscamos matrices $U$ y $V$ tales que
+Es decir, buscamos matrices $U$ y $V$ tales que
 $$R\approx UV^T.$$
-Para determinar qué tan buena es nuestra aproximación, podemos hacer uso de la norma de Frobenius. En consecuencia, buscamos $U$ y $V$ de modo que la diferencia entre $R$ y su aproximación sea tan pequeña como sea posible, es decir, que
+Para determinar qué tan buena es nuestra aproximación, podemos hacer uso de la norma de Frobenius\footnote{Tomamos esta y no otra norma, pues, por la naturaleza de nuestras matrices, otras normas no pueden ser consideradas. Más aún, en el espacio de matrices finitas con coeficientes reales, todas las normas son equivalentes, de modo que su elección es un asunto meramente pragmatico.}. En consecuencia, buscamos $U$ y $V$ de modo que la diferencia entre $R$ y su aproximación sea tan pequeña como sea posible, es decir, que
 $$\|R-UV^T\|_F$$
 sea mínima.
 Podemos formular este problema como un problema de optimización, en el cual buscamos las matrices $U$ y $V$ que minimicen el error de aproximación:
@@ -47,7 +38,7 @@ En este trabajo, discutiremos una rama particular de los métodos de recomendaci
 
 Para comenzar este recorrido por los sistemas de recomendación, estudiaremos primero un método sencillo que, aunque puede resultar computacionalmente costoso, permite obtener resultados satisfactorios y sirve como punto de partida para métodos más sofisticados.
 
-\section{Conceptos latentes}
+\chapter{Conceptos latentes}
 
 En muchos problemas de aprendizaje automático, los datos pueden presentar características subyacentes que no son directamente observables, pero que permiten explicar las relaciones entre las distintas observaciones. La identificación de estas características puede resultar de gran utilidad, ya que permite modelar tanto las preferencias de los usuarios como las propiedades de los elementos con los que estos interactúan. A estas características no observadas las denominaremos \textit{conceptos latentes}.
 
@@ -66,7 +57,7 @@ Llamaremos \textbf{factores latentes} a los vectores $\vec{u}_i$ y $\vec{v}_j$. 
 
 El parámetro $k$ determina la dimensión del espacio latente. Si $k$ es menor que el rango de $R$, no buscamos obtener una factorización exacta, sino una aproximación de rango reducido,
 $$ R\approx UV^T. $$
-La calidad de esta aproximación puede medirse mediante la norma de Frobenius\footnote{Tomamos esta y no otra norma, pues, por la naturaleza de nuestras matrices, otras normas no pueden ser consideradas. Más aún, en el espacio de matrices finitas con coeficientes reales, todas las normas son equivalentes, de modo que su elección es un asunto meramente pragmatico.}
+La calidad de esta aproximación puede medirse mediante la norma de Frobenius,
 $$ \|R-UV^T\|_F. $$
 En consecuencia, la búsqueda de una aproximación de rango bajo puede plantearse como un problema de optimización, en el que buscamos determinar $U$ y $V$ de modo que minimicen el error de reconstrucción. En el caso de disponer de la matriz completa, esto conduce al problema
 $$ \min_{U,V}\frac{1}{2}\|R-UV^T\|_F^2. $$
@@ -88,7 +79,7 @@ O, equivalentemente,
 $$ \min_{U,V} \frac{1}{2} \sum_{(i,j)\in S} \left( r_{ij}-\vec{u}_i\cdot\vec{v}_j \right)^2. $$
 Esta formulación permite determinar los factores latentes utilizando únicamente la información disponible en las entradas observadas, para posteriormente emplearlos en la predicción de las valoraciones faltantes.
 
-\begin{figure}[]
+\begin{figure}[htbp]
 	\centering
 	\begin{tikzpicture}[
 		scale=0.95, every node/.style={transform shape},
@@ -166,7 +157,6 @@ Esta formulación permite determinar los factores latentes utilizando únicament
 	\label{fig:matrix_factorization}
 \end{figure}
 
-\chapter{Métodos de aproximacion}
 \section{Gradiente Descendiente}
 
 El conjunto de datos de validación es un subconjunto de los datos disponibles para el entrenamiento del modelo. Un problema práctico con este enfoque es que la cantidad de datos disponibles es limitada e, idealmente, queremos utilizar la mayor cantidad posible de ellos para entrenar el modelo. Esto requiere que nuestro conjunto de validación $V$ sea relativamente pequeño, lo que puede llevar a una estimación ruidosa (de alta varianza) de la capacidad de predicción del modelo.
@@ -262,6 +252,8 @@ Una posibilidad es utilizar validación cruzada anidada para buscar buenos hiper
 \textit{[Insertar dibujo.]}
 
 \subsection{Gradiente descendiente: búsqueda de direcciones para métodos de búsqueda lineal}
+
+Nocedal, pág. 21.
 
 La dirección de máximo crecimiento $\nabla f_k$ sugiere de manera natural que la dirección opuesta,
 
